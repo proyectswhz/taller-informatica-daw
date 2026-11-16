@@ -7,7 +7,7 @@ import Connect from "./config/db.js";
 
 import customerRoutes from "./routes/customers-routes.js";
 import deviceRoutes from "./routes/device-routes.js";
-// import workOrdersRoutes from "./routes/workOrders.js";
+import workOrdersRoutes from "./routes/workOrders-routes.js";
 
 // ... el resto de tu código
 
@@ -32,7 +32,7 @@ Connect();
 // Usar rutas
 app.use("/api/customers", customerRoutes);
 app.use("/api/devices", deviceRoutes);
-// app.use("/api/workOrders", workOrdersRoutes);
+app.use("/api/workOrders", workOrdersRoutes);
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 5000;
