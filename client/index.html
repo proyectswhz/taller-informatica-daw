@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Taller de Informática - Panel de Control</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>💻 Taller de Reparaciones</h1>
+      <div class="status-badge-header" id="api-status">
+        Conectando a Render...
+      </div>
+    </header>
+
+    <main>
+      <section class="orders-grid" id="orders-container">
+        <div class="loading-state">Cargando órdenes de trabajo...</div>
+      </section>
+    </main>
+
+    <script>
+      // ⚠️ Pon aquí tu URL real de Render:
+      const API_URL = "https://TU-BACKEND-EN-RENDER.onrender.com/api";
+
+      async function fetchWorkOrders() {
+        const container = document.getElementById("orders-container");
+        const statusBadge = document.getElementById("api-status");
+
+        try {
+          const response = await fetch(`${API_URL}/workorders`);
+
+          if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+          }
+
+          const orders = await response.json();
+          statusBadge.textContent = "🟢 Cloud API Online";
+          statusBadge.style.color = "#04d361";
+
+          if (orders.length === 0) {
+            container.innerHTML =
+              '<div class="loading-state">No hay órdenes de trabajo registradas.</div>';
+            return;
+          }
+
+          container.innerHTML = orders
+            .map((order) => {
+              const customerName = order.customer
+                ? `${order.customer.name} (${order.customer.phone || "Sin tlf"})`
+                : "Cliente no especificado";
+              const deviceModel = order.device
+                ? `${order.device.brand} ${order.device.model}`
+                : "Dispositivo desconocido";
+              const statusClass =
+                order.status && order.status.toLowerCase() === "completado"
+                  ? "status-completado"
+                  : "status-pendiente";
+
+              return `
+            <article class="card">
+              <div class="card-header">
+                <span class="device-title">${deviceModel}</span>
+                <span class="status-tag ${statusClass}">${order.status || "Pendiente"}</span>
+              </div>
+              
+              <div class="info-group">
+                👤 <strong>Cliente:</strong> ${customerName}
+              </div>
+
+              <div class="info-group">
+                ⚠️ <strong>Avería:</strong> ${order.issueDescription}
+              </div>
+
+              ${
+                order.technicianNotes
+                  ? `
+                <div class="info-group">
+                  📝 <strong>Notas:</strong> ${order.technicianNotes}
+                </div>
+              `
+                  : ""
+              }
+
+              <div class="price-tag">
+                💰 Est.: ${order.estimatedCost ? `${order.estimatedCost}€` : "N/A"}
+              </div>
+            </article>
+          `;
+            })
+            .join("");
+        } catch (error) {
+          console.error("Error al obtener órdenes:", error);
+          statusBadge.textContent = "🔴 Error de Conexión";
+          statusBadge.style.color = "#e74c3c";
+          container.innerHTML = `
+          <div class="error-state">
+            <p>No se pudieron cargar las órdenes de trabajo.</p>
+            <small style="color: #666; display: block; margin-top: 0.5rem;">Revisa la URL de Render en el script.</small>
+          </div>
+        `;
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", fetchWorkOrders);
+    </script>
+  </body>
+</html>
