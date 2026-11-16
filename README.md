@@ -7,15 +7,18 @@ Sistema de gestión interna B2B para talleres de reparación de equipos informá
 ## 🚀 Tecnologías Utilizadas
 
 ### Backend
+
 - **Node.js** con **Express** (API RESTful)
 - **MongoDB** con **Mongoose** (Base de datos NoSQL con relaciones via `ObjectId`)
 - **CORS** & **dotenv** (Seguridad y configuración de entorno)
 
 ### Frontend
+
 - **HTML5** & **CSS3 puro** (Sin frameworks como Tailwind/Bootstrap)
 - **JavaScript Vainilla** (Arquitectura de páginas separadas usando `fetch` API)
 
 ### Infraestructura y Despliegue
+
 - **Backend**: Render (Web Service)
 - **Frontend**: Vercel (Static Hosting)
 - **Base de Datos**: MongoDB local (Desarrollo) / MongoDB Atlas (Producción)
@@ -51,20 +54,20 @@ taller-pc/
 ## 🗄️ Modelo de Datos
 
 1. **`Customer` (Clientes):** Nombre, teléfono, email, DNI/CIF.
-2. **`Device` (Equipos):** Tipo (*Portátil, Sobremesa, Consola*), marca, modelo, número de serie.
-3. **`WorkOrder` (Órdenes de Trabajo):** Relación con Cliente y Equipo, descripción de la avería, estado (*Recibido*, *En Diagnóstico*, *Esperando Repuesto*, *Reparado*, *Entregado*), desglose de piezas y horas de mano de obra.
+2. **`Device` (Equipos):** Tipo (_Portátil, Sobremesa, Consola_), marca, modelo, número de serie.
+3. **`WorkOrder` (Órdenes de Trabajo):** Relación con Cliente y Equipo, descripción de la avería, estado (_Recibido_, _En Diagnóstico_, _Esperando Repuesto_, _Reparado_, _Entregado_), desglose de piezas y horas de mano de obra.
 
 ---
 
 ## 🗺️ Fases del Proyecto (Hoja de Ruta DAW)
 
 - [x] **Fase 1: Entorno e Infraestructura Local**
-  - Estructura de carpetas `/server` y `/client`.
-  - Configuración del repositorio Git e inicialización del proyecto.
-  - Conexión a MongoDB local (`mongodb://localhost:27017/taller-pc-db`).
+  - [x] Estructura de carpetas `/server` y `/client`.
+  - [x] Configuración del repositorio Git e inicialización del proyecto.
+  - [x] Conexión a MongoDB local (`mongodb://localhost:27017/taller-pc-db`).
 
 - [ ] **Fase 2: Backend Core y Modelos de Taller**
-  - Esquemas Mongoose: `Customer.js`, `Device.js` y `WorkOrder.js`.
+  - [x] Esquemas Mongoose: `Customer.js`, `Device.js` y `WorkOrder.js`.
   - Controlador y endpoints CRUD de órdenes de trabajo.
   - Configuración del middleware `cors`.
 
@@ -95,26 +98,30 @@ taller-pc/
 ## ⚙️ Configuración del Entorno Local
 
 1. **Clonar el repositorio y ubicar la carpeta del proyecto:**
+
    ```bash
    cd taller-pc
    ```
 
 2. **Configurar el Backend:**
+
    ```bash
    cd server
    npm install
    ```
 
 3. **Crear el archivo `.env` en `/server` con los siguientes parámetros:**
+
    ```env
    PORT=5000
    MONGO_URI=mongodb://localhost:27017/taller-pc-db
    ```
 
 4. **Iniciar el servidor en modo desarrollo:**
+
    ```bash
    npm start
    ```
 
 5. **Abrir el Frontend:**
-   Abrir `client/index.html` en el navegador o mediante una extensión de servidor local tipo *Live Server*.
+   Abrir `client/index.html` en el navegador o mediante una extensión de servidor local tipo _Live Server_.
