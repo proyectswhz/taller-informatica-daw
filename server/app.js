@@ -20,16 +20,18 @@ app.disable("x-powered-by");
 // Configurar dotenv
 dotenv.config();
 
+// Lista de orígenes permitidos (Local y producción en Vercel)
 const dominiosPermitidos = [
-  "http://localhost:3000", // Por si tu frontend corre en local (Live Server o Vite)
+  "http://localhost:3000",
   "http://localhost:5500",
-  "https://tu-frontend.vercel.app", // Tu futura URL de Vercel cuando despliegues el cliente
+  "http://127.0.0.1:5500",
+  "https://taller-informatica-daw-client.vercel.app",
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Permitir solicitudes sin origen (como Postman, Thunder Client o apps móviles)
+      // Permitir solicitudes sin origen (como Postman, Thunder Client o peticiones servidor-servidor)
       if (!origin) return callback(null, true);
 
       if (
@@ -38,11 +40,14 @@ app.use(
       ) {
         callback(null, true);
       } else {
-        callback(new Error("Bloqueado por la política CORS"));
+        callback(new Error("Bloqueado por la política CORS de producción"));
       }
     },
+    credentials: true,
   }),
 );
+
+app.use(express.json());
 
 // json middleware
 app.use(express.json());
