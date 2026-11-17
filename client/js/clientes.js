@@ -274,13 +274,13 @@ searchInput.addEventListener("input", async (e) => {
 });
 
 async function checkServerStatus() {
-  const statusDot = document.getElementById("statusDot");
-  const statusText = document.getElementById("statusText");
+  const statusDot = document.getElementById("status-dot");
+  const statusText = document.getElementById("status-text");
 
   if (!statusDot || !statusText) return;
 
   // URL base de tu API (quitando /api/customers para probar la raíz o haciendo HEAD/GET)
-  const urlRoot = "https://taller-informatica-daw.onrender.com/";
+  const urlRoot = "https://taller-informatica-daw.onrender.com/api/health"; // Endpoint de salud que puedes crear en tu backend
 
   try {
     statusDot.className = "status-dot checking";
@@ -304,6 +304,6 @@ async function checkServerStatus() {
 }
 
 // Ejecutar la comprobación al iniciar la vista de clientes
-checkServerStatus();
 
 cargarClientes();
+checkServerStatus();
