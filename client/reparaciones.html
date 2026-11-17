@@ -51,6 +51,25 @@
             <button type="button" id="btnCloseForm" class="btn-close">✖</button>
           </div>
           <form id="order-form">
+            <label for="customer">Cliente:</label>
+            <select
+              name="customer"
+              id="customer"
+              required
+              style="
+                padding: 0.75rem 1rem;
+                border: 1px solid #d1d5db;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                background-color: #faf8f5;
+                color: #1f2937;
+                width: 100%;
+                box-sizing: border-box;
+              "
+            >
+              <option value="">Seleccione un cliente...</option>
+            </select>
+
             <label for="device">Dispositivo:</label>
             <select
               name="device"
@@ -67,10 +86,19 @@
                 box-sizing: border-box;
               "
             >
-              <option value="">Seleccione un dispositivo...</option>
+              <option value="">Seleccione primero un cliente...</option>
             </select>
 
-            <label for="status">Estado de la Reparación:</label>
+            <label for="issueDescription">Descripción de la Avería:</label>
+            <textarea
+              name="issueDescription"
+              id="issueDescription"
+              rows="3"
+              placeholder="Describe el problema que presenta el equipo..."
+              required
+            ></textarea>
+
+            <label for="status">Estado:</label>
             <select
               name="status"
               id="status"
@@ -87,28 +115,40 @@
               "
             >
               <option value="Pendiente">Pendiente</option>
-              <option value="En Proceso">En Proceso</option>
-              <option value="Completada">Completada</option>
+              <option value="En reparación">En reparación</option>
+              <option value="Finalizado">Finalizado</option>
               <option value="Entregada">Entregada</option>
             </select>
 
-            <label for="diagnosis">Diagnóstico / Acciones realizadas:</label>
-            <textarea
-              name="diagnosis"
-              id="diagnosis"
-              placeholder="Describe el diagnóstico técnico o reparación efectuada..."
-            ></textarea>
-
-            <label for="cost">Coste (€):</label>
+            <label for="estimatedCost">Coste Estimado (€):</label>
             <input
               type="number"
               step="0.01"
-              name="cost"
-              id="cost"
-              placeholder="Ej. 45.00"
+              name="estimatedCost"
+              id="estimatedCost"
+              placeholder="0.00"
             />
 
-            <button type="submit" class="submit-btn">Guardar Orden</button>
+            <label for="finalCost">Coste Final (€):</label>
+            <input
+              type="number"
+              step="0.01"
+              name="finalCost"
+              id="finalCost"
+              placeholder="0.00"
+            />
+
+            <label for="technicianNotes">Notas del Técnico:</label>
+            <textarea
+              name="technicianNotes"
+              id="technicianNotes"
+              rows="2"
+              placeholder="Observaciones internas del taller..."
+            ></textarea>
+
+            <button type="submit" class="submit-btn">
+              Guardar Orden de Reparación
+            </button>
           </form>
         </div>
 

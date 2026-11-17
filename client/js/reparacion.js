@@ -10,12 +10,15 @@ const formContainer = document.getElementById("formContainer");
 const mainGrid = document.getElementById("mainGrid");
 const btnToggleForm = document.getElementById("btnToggleForm");
 const btnCloseForm = document.getElementById("btnCloseForm");
+const selectCustomer = document.getElementById("customer");
 const selectDevice = document.getElementById("device");
 const formTitle = document.getElementById("formTitle");
 
 let editingOrderId = null;
+let listaClientes = [];
+let listaDispositivos = [];
 
-// 1. Mostrar formulario para CREAR
+// Mostrar formulario para CREAR
 btnToggleForm.addEventListener("click", (e) => {
   e.preventDefault();
   editingOrderId = null;
@@ -33,90 +36,97 @@ btnCloseForm.addEventListener("click", () => {
   orderForm.reset();
 });
 
-// 2. Cargar dispositivos en el desplegable `<select>` del formulario
-async function cargarDispositivosEnSelect() {
+// Cargar datos iniciales para los desplegables
+async function cargarCatalogos() {
   try {
-    const response = await fetch(URL_devices);
-    const responseClientes = await fetch(URL_clientes);
-    if (!response.ok || !responseClientes.ok)
-      throw new Error("Error al obtener datos de apoyo");
+    const [resClientes, resDevices] = await Promise.all([
+      fetch(URL_clientes),
+      fetch(URL_devices),
+    ]);
 
-    const dispositivos = await response.json();
-    const clientes = await responseClientes.json();
+    if (resClientes.ok) listaClientes = await resClientes.json();
+    if (resDevices.ok) listaDispositivos = await resDevices.json();
 
-    selectDevice.innerHTML =
-      '<option value="">Seleccione un dispositivo...</option>';
-    dispositivos.forEach((device) => {
-      const clienteId =
-        device.customer?._id || device.customer || device.customerId;
-      const clienteEncontrado = clientes.find((c) => c._id === clienteId);
-      const nombreCliente = clienteEncontrado
-        ? `${clienteEncontrado.name} ${clienteEncontrado.surname || ""}`
-        : "Sin cliente";
-
-      const option = document.createElement("option");
-      option.value = device._id;
-      option.textContent = `${device.type} - ${device.brand} ${device.model} (Prop: ${nombreCliente})`;
-      selectDevice.appendChild(option);
+    // Rellenar select de clientes
+    selectCustomer.innerHTML =
+      '<option value="">Seleccione un cliente...</option>';
+    listaClientes.forEach((c) => {
+      const opt = document.createElement("option");
+      opt.value = c._id;
+      opt.textContent = `${c.name} ${c.surname || ""} (DNI: ${c.dni})`;
+      selectCustomer.appendChild(opt);
     });
   } catch (error) {
-    console.error("Error al cargar dispositivos en select:", error);
+    console.error("Error al cargar catálogos:", error);
   }
 }
 
-// 3. Cargar listado de órdenes de reparación en la tabla
+// Al cambiar de cliente, filtramos los dispositivos de ese cliente en el select de dispositivos
+selectCustomer.addEventListener("change", (e) => {
+  const customerId = e.target.value;
+  selectDevice.innerHTML =
+    '<option value="">Seleccione un dispositivo...</option>';
+
+  if (!customerId) return;
+
+  const dispositivosFiltrados = listaDispositivos.filter((d) => {
+    const cId = d.customer?._id || d.customer || d.customerId;
+    return cId === customerId;
+  });
+
+  dispositivosFiltrados.forEach((d) => {
+    const opt = document.createElement("option");
+    opt.value = d._id;
+    opt.textContent = `${d.type} - ${d.brand} ${d.model} (SN: ${d.serialNumber || "N/A"})`;
+    selectDevice.appendChild(opt);
+  });
+});
+
+// Cargar listado de órdenes en la tabla
 async function cargarReparaciones() {
   try {
     const response = await fetch(URL_workOrders);
-    const responseDevices = await fetch(URL_devices);
-    const responseClientes = await fetch(URL_clientes);
-
-    if (!response.ok)
-      throw new Error("Error al obtener las órdenes de reparación");
+    if (!response.ok) throw new Error("Error al obtener las órdenes");
 
     const reparaciones = await response.json();
-    const dispositivos = responseDevices.ok ? await responseDevices.json() : [];
-    const clientes = responseClientes.ok ? await responseClientes.json() : [];
-
     tablaReparaciones.innerHTML = "";
 
     reparaciones.forEach((orden) => {
-      // Buscar dispositivo asociado
-      const deviceId = orden.device?._id || orden.device;
-      const dispositivoEncontrado = dispositivos.find(
-        (d) => d._id === deviceId,
-      );
+      // Resolver dispositivo y cliente
+      const devId = orden.device?._id || orden.device;
+      const dispositivo = listaDispositivos.find((d) => d._id === devId);
 
-      // Buscar cliente propietario del dispositivo
       let nombreCliente = "N/A";
-      if (dispositivoEncontrado) {
-        const clienteId =
-          dispositivoEncontrado.customer?._id ||
-          dispositivoEncontrado.customer ||
-          dispositivoEncontrado.customerId;
-        const clienteEncontrado = clientes.find((c) => c._id === clienteId);
-        if (clienteEncontrado) {
-          nombreCliente = `${clienteEncontrado.name} ${clienteEncontrado.surname || ""}`;
-        }
+      let infoDisp = "Dispositivo desconocido";
+
+      if (dispositivo) {
+        infoDisp = `${dispositivo.type} (${dispositivo.brand} ${dispositivo.model})`;
+        const cId =
+          dispositivo.customer?._id ||
+          dispositivo.customer ||
+          dispositivo.customerId;
+        const cliente = listaClientes.find((c) => c._id === cId);
+        if (cliente) nombreCliente = `${cliente.name} ${cliente.surname || ""}`;
+      } else if (orden.customer) {
+        const cliente = listaClientes.find(
+          (c) => c._id === (orden.customer?._id || orden.customer),
+        );
+        if (cliente) nombreCliente = `${cliente.name} ${cliente.surname || ""}`;
       }
 
-      const infoDispositivo = dispositivoEncontrado
-        ? `${dispositivoEncontrado.type} (${dispositivoEncontrado.brand} ${dispositivoEncontrado.model})`
-        : "Dispositivo desconocido";
-
-      // Color de badge según estado
+      // Clases para el badge de estado
       let badgeClass = "status-pendiente";
-      if (orden.status === "En Proceso") badgeClass = "status-proceso";
-      if (orden.status === "Completada") badgeClass = "status-completada";
+      if (orden.status === "En reparación") badgeClass = "status-proceso";
+      if (orden.status === "Finalizado") badgeClass = "status-completada";
       if (orden.status === "Entregada") badgeClass = "status-entregada";
 
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td><strong>${infoDispositivo}</strong></td>
+        <td><strong>${infoDisp}</strong></td>
         <td>${nombreCliente}</td>
         <td><span class="status-badge ${badgeClass}">${orden.status}</span></td>
-        <td>${orden.diagnosis || "Sin diagnóstico registrado"}</td>
-        <td>${orden.cost ? `${orden.cost} €` : "0.00 €"}</td>
+        <td>${orden.issueDescription || "-"}</td>
+        <td>${orden.finalCost ? `${orden.finalCost} €` : orden.estimatedCost ? `${orden.estimatedCost} € (Est.)` : "0.00 €"}</td>
         <td>
           <div class="action-buttons">
             <button onclick="editarReparacion('${orden._id}')" class="btn-action btn-edit" title="Editar Orden">✏️</button>
@@ -131,7 +141,7 @@ async function cargarReparaciones() {
   }
 }
 
-// 4. Crear o actualizar orden de reparación
+// Crear o actualizar orden (Submit)
 orderForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -154,8 +164,10 @@ orderForm.addEventListener("submit", async (event) => {
       });
     }
 
-    if (!response.ok)
-      throw new Error("Error al guardar la orden de reparación");
+    if (!response.ok) {
+      const errJson = await response.json().catch(() => ({}));
+      throw new Error(errJson.message || "Error al guardar la orden");
+    }
 
     orderForm.reset();
     editingOrderId = null;
@@ -164,21 +176,39 @@ orderForm.addEventListener("submit", async (event) => {
     cargarReparaciones();
   } catch (error) {
     console.error("Error al guardar la orden:", error);
-    alert("No se pudo guardar la orden de reparación.");
+    alert(`No se pudo guardar la orden: ${error.message}`);
   }
 });
 
-// 5. Cargar datos para EDITAR
+// Cargar datos para EDITAR
 window.editarReparacion = async function (id) {
   try {
     const response = await fetch(`${URL_workOrders}/${id}`);
     if (!response.ok) throw new Error("Error al obtener la orden");
     const orden = await response.json();
 
-    selectDevice.value = orden.device?._id || orden.device || "";
+    const devId = orden.device?._id || orden.device || "";
+    const dispositivo = listaDispositivos.find((d) => d._id === devId);
+
+    if (dispositivo) {
+      const cId =
+        dispositivo.customer?._id ||
+        dispositivo.customer ||
+        dispositivo.customerId;
+      selectCustomer.value = cId || "";
+
+      // Disparar cambio para rellenar dispositivos del cliente
+      selectCustomer.dispatchEvent(new Event("change"));
+    }
+
+    selectDevice.value = devId;
+    document.getElementById("issueDescription").value =
+      orden.issueDescription || "";
     document.getElementById("status").value = orden.status || "Pendiente";
-    document.getElementById("diagnosis").value = orden.diagnosis || "";
-    document.getElementById("cost").value = orden.cost || "";
+    document.getElementById("estimatedCost").value = orden.estimatedCost || "";
+    document.getElementById("finalCost").value = orden.finalCost || "";
+    document.getElementById("technicianNotes").value =
+      orden.technicianNotes || "";
 
     editingOrderId = id;
     formTitle.textContent = "Editar Orden de Reparación";
@@ -189,7 +219,7 @@ window.editarReparacion = async function (id) {
   }
 };
 
-// 6. Eliminar orden
+// Eliminar orden
 window.eliminarReparacion = async function (id) {
   if (
     !confirm("¿Estás seguro de que deseas eliminar esta orden de reparación?")
@@ -209,6 +239,10 @@ window.eliminarReparacion = async function (id) {
   }
 };
 
-// Inicialización al cargar la página
-cargarDispositivosEnSelect();
-cargarReparaciones();
+// Inicialización
+async function init() {
+  await cargarCatalogos();
+  await cargarReparaciones();
+}
+
+init();
