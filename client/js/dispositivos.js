@@ -7,8 +7,25 @@ const tablaDispositivos = document.getElementById("tabla-dispositivos-body");
 const dispositivosForm = document.getElementById("device-form"); // Corregido: era client-form
 const formContainer = document.getElementById("formContainer");
 const mainGrid = document.getElementById("mainGrid");
+const btnToggleForm = document.getElementById("btnToggleForm");
+const btnCloseForm = document.getElementById("btnCloseForm");
 let editingDeviceId = null; // Variable para almacenar el ID del dispositivo que se está editando
 
+let editandoId = null;
+// 1. Mostrar/Ocultar el formulario al hacer clic en "Nuevo Cliente"
+btnToggleForm.addEventListener("click", (e) => {
+  e.preventDefault();
+  editandoId = null; // Limpiamos el ID por si veníamos de editar
+  formContainer.classList.remove("hidden");
+  mainGrid.classList.add("show-form");
+});
+
+btnCloseForm.addEventListener("click", () => {
+  formContainer.classList.add("hidden");
+  mainGrid.classList.remove("show-form");
+  editandoId = null;
+  dispositivosForm.reset();
+});
 // 1. Cargar dispositivos al cargar la página
 async function cargarDispositivos() {
   try {
