@@ -7,6 +7,15 @@ const mainGrid = document.getElementById("mainGrid");
 const clientForm = document.getElementById("client-form");
 const responseMessage = document.getElementById("response-message");
 
+// Referencias del Modal de Dispositivos
+const deviceModal = document.getElementById("deviceModal");
+const btnCloseDeviceModal = document.getElementById("btnCloseDeviceModal");
+const deviceForm = document.getElementById("device-form");
+const modalCustomerId = document.getElementById("modalCustomerId");
+const deviceResponseMessage = document.getElementById(
+  "device-response-message",
+);
+
 let editandoId = null;
 // 1. Mostrar/Ocultar el formulario al hacer clic en "Nuevo Cliente"
 btnToggleForm.addEventListener("click", (e) => {
@@ -133,10 +142,68 @@ async function editarCliente(id) {
 }
 
 // BOTÓN VER REPARACIONES DEL CLIENTE: Redirige al listado de órdenes del cliente
-function verReparacionesCliente(id) {
-  // Puedes redirigir a una vista general o específica pasando el ID por URL
-  window.location.href = `reparaciones.html?clienteId=${id}`;
+function abrirDispositivo(clienteId) {
+  modalCustomerId.value = clienteId; // Guardamos el ID en el input oculto
+  deviceForm.reset();
+  deviceResponseMessage.className = "message-box";
+  deviceResponseMessage.textContent = "";
+  deviceModal.classList.remove("hidden");
 }
+
+// Cerrar el modal
+btnCloseDeviceModal.addEventListener("click", () => {
+  deviceModal.classList.add("hidden");
+});
+
+// Cerrar modal haciendo clic fuera de la tarjeta
+deviceModal.addEventListener("click", (e) => {
+  if (e.target === deviceModal) {
+    deviceModal.classList.add("hidden");
+  }
+});
+
+// Enviar el nuevo dispositivo a la API
+deviceForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const clienteId = modalCustomerId.value;
+  const deviceData = {
+    customerId: clienteId,
+    type: document.getElementById("deviceType").value,
+    brandModel: document.getElementById("deviceBrand").value,
+    serialNumber: document.getElementById("serialNumber").value,
+    issueDescription: document.getElementById("issueDescription").value,
+  };
+
+  try {
+    // Ajusta la ruta de tu API si tu endpoint de dispositivos es distinto (ej. /api/devices)
+    const response = await fetch(
+      "https://taller-informatica-daw.onrender.com/api/devices",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(deviceData),
+      },
+    );
+
+    if (response.ok) {
+      deviceResponseMessage.textContent =
+        "¡Dispositivo añadido y orden creada con éxito!";
+      deviceResponseMessage.className = "message-box success";
+      setTimeout(() => {
+        deviceModal.classList.add("hidden");
+      }, 1500);
+    } else {
+      const err = await response.json();
+      deviceResponseMessage.textContent = `Error: ${err.message || "No se pudo registrar el dispositivo."}`;
+      deviceResponseMessage.className = "message-box error";
+    }
+  } catch (error) {
+    console.error("Error de red:", error);
+    deviceResponseMessage.textContent = "Error de conexión con el servidor.";
+    deviceResponseMessage.className = "message-box error";
+  }
+});
 
 async function eliminarCliente(id) {
   if (confirm("¿Estás seguro de que deseas eliminar este cliente?")) {

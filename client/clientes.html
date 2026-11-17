@@ -11,7 +11,7 @@
     <header class="site-header">
       <div class="header-container">
         <div class="logo">
-          <a href="index.html">🔧 TALLER DAW</a>
+          <a href="index.html">🔧 Taller Informático - DAW</a>
         </div>
         <nav class="main-nav">
           <ul>
@@ -91,6 +91,72 @@
             </table>
           </div>
         </section>
+      </div>
+      <!-- MODAL PARA AÑADIR DISPOSITIVO -->
+      <div id="deviceModal" class="modal-overlay hidden">
+        <div class="modal-card">
+          <div class="form-header">
+            <h2>Añadir Dispositivo al Cliente</h2>
+            <button type="button" id="btnCloseDeviceModal" class="btn-close">
+              ✖
+            </button>
+          </div>
+
+          <form id="device-form">
+            <input type="hidden" id="modalCustomerId" />
+
+            <label for="deviceType">Tipo de Dispositivo:</label>
+            <input
+              type="text"
+              id="deviceType"
+              placeholder="Ej. Portátil, Sobremesa, Móvil..."
+              required
+            />
+
+            <label for="deviceBrand">Marca y Modelo:</label>
+            <input
+              type="text"
+              id="deviceBrand"
+              placeholder="Ej. HP Pavilion 15, Lenovo ThinkPad..."
+              required
+            />
+
+            <label for="serialNumber">Número de Serie (Opcional):</label>
+            <input
+              type="text"
+              id="serialNumber"
+              placeholder="Ej. SN123456789"
+            />
+
+            <label for="issueDescription">Descripción de la Avería:</label>
+            <textarea
+              id="issueDescription"
+              rows="3"
+              placeholder="Describe el problema que presenta el equipo..."
+              required
+              style="
+                padding: 0.75rem 1rem;
+                border: 1px solid #d1d5db;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                background-color: #faf8f5;
+                color: #1f2937;
+                resize: vertical;
+                width: 100%;
+                box-sizing: border-box;
+              "
+            ></textarea>
+
+            <button
+              type="submit"
+              class="submit-btn"
+              style="width: 100%; margin-top: 1.5rem"
+            >
+              Guardar Dispositivo
+            </button>
+          </form>
+          <div id="device-response-message" class="message-box"></div>
+        </div>
       </div>
     </main>
 
