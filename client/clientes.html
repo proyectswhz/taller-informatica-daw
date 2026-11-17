@@ -113,11 +113,19 @@
               required
             />
 
-            <label for="deviceBrand">Marca y Modelo:</label>
+            <label for="deviceBrand">Marca:</label>
             <input
               type="text"
               id="deviceBrand"
-              placeholder="Ej. HP Pavilion 15, Lenovo ThinkPad..."
+              placeholder="Ej. HP, Lenovo, Apple..."
+              required
+            />
+
+            <label for="deviceModel">Modelo:</label>
+            <input
+              type="text"
+              id="deviceModel"
+              placeholder="Ej. Pavilion 15, ThinkPad T480..."
               required
             />
 
@@ -128,11 +136,11 @@
               placeholder="Ej. SN123456789"
             />
 
-            <label for="issueDescription">Descripción de la Avería:</label>
+            <label for="deviceObservations">Observaciones / Avería:</label>
             <textarea
-              id="issueDescription"
+              id="deviceObservations"
               rows="3"
-              placeholder="Describe el problema que presenta el equipo..."
+              placeholder="Describe el problema o estado del equipo..."
               required
               style="
                 padding: 0.75rem 1rem;

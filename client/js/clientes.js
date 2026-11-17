@@ -168,15 +168,15 @@ deviceForm.addEventListener("submit", async (e) => {
 
   const clienteId = modalCustomerId.value;
   const deviceData = {
-    customerId: clienteId,
+    customer: clienteId, // Clave exacta del modelo de Mongoose
     type: document.getElementById("deviceType").value,
-    brandModel: document.getElementById("deviceBrand").value,
+    brand: document.getElementById("deviceBrand").value,
+    model: document.getElementById("deviceModel").value,
     serialNumber: document.getElementById("serialNumber").value,
-    issueDescription: document.getElementById("issueDescription").value,
+    observations: document.getElementById("deviceObservations").value,
   };
 
   try {
-    // Ajusta la ruta de tu API si tu endpoint de dispositivos es distinto (ej. /api/devices)
     const response = await fetch(
       "https://taller-informatica-daw.onrender.com/api/devices",
       {
@@ -187,8 +187,7 @@ deviceForm.addEventListener("submit", async (e) => {
     );
 
     if (response.ok) {
-      deviceResponseMessage.textContent =
-        "¡Dispositivo añadido y orden creada con éxito!";
+      deviceResponseMessage.textContent = "¡Dispositivo añadido con éxito!";
       deviceResponseMessage.className = "message-box success";
       setTimeout(() => {
         deviceModal.classList.add("hidden");
