@@ -16,6 +16,8 @@ const deviceResponseMessage = document.getElementById(
   "device-response-message",
 );
 
+const serverStatus = document.getElementById("server-status");
+
 // Referencia al input de búsqueda de la vista
 const searchInput = document.getElementById("searchInput");
 
@@ -270,5 +272,38 @@ searchInput.addEventListener("input", async (e) => {
     console.error("Error al buscar clientes:", error);
   }
 });
+
+async function checkServerStatus() {
+  const statusDot = document.getElementById("statusDot");
+  const statusText = document.getElementById("statusText");
+
+  if (!statusDot || !statusText) return;
+
+  // URL base de tu API (quitando /api/customers para probar la raíz o haciendo HEAD/GET)
+  const urlRoot = "https://taller-informatica-daw.onrender.com/";
+
+  try {
+    statusDot.className = "status-dot checking";
+    statusText.textContent = "Conectando con servidor...";
+
+    // Hacemos una petición rápida al servidor
+    const response = await fetch(urlRoot, { method: "GET" });
+
+    if (response.ok || response.status < 500) {
+      statusDot.className = "status-dot online";
+      statusText.textContent = "Servidor activo";
+    } else {
+      statusDot.className = "status-dot offline";
+      statusText.textContent = "Servidor con problemas";
+    }
+  } catch (error) {
+    statusDot.className = "status-dot offline";
+    statusText.textContent = "Servidor inactivo (Render dormido)";
+    console.error("Error al comprobar el estado del servidor:", error);
+  }
+}
+
+// Ejecutar la comprobación al iniciar la vista de clientes
+checkServerStatus();
 
 cargarClientes();
