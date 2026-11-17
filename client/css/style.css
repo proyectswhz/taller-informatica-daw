@@ -610,3 +610,132 @@ tr:hover td {
   background-color: #ffffff;
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
+/* ==========================================================================
+   Vista de Dispositivos (Layout, Grid y Listado)
+   ========================================================================== */
+.dispositivos-layout {
+  max-width: 1300px;
+  width: 95%;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  box-sizing: border-box;
+}
+
+/* Tarjeta del formulario y tarjeta de la tabla */
+.form-card,
+.table-card {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid #e7dfd3;
+  box-shadow: 0 10px 25px rgba(30, 58, 138, 0.06);
+  box-sizing: border-box;
+}
+
+.form-card.hidden {
+  display: none;
+}
+
+/* Cabecera interna del formulario con botón de cierre */
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #f3eff6;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.form-header h2,
+.table-card h2 {
+  margin: 0;
+  color: #1e3a8a;
+  font-size: 1.3rem;
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.btn-close:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+/* Estilos de los inputs y textareas del formulario de dispositivos */
+#device-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+#device-form label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #1e3a8a;
+  margin-top: 0.75rem;
+  letter-spacing: 0.01em;
+}
+
+#device-form input,
+#device-form textarea {
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: #faf8f5;
+  color: #1f2937;
+  transition: all 0.25s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#device-form textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+#device-form input:focus,
+#device-form textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+/* Botón de envío del formulario */
+.submit-btn {
+  margin-top: 1.75rem;
+  background-color: #1e3a8a;
+  color: #ffffff;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease,
+    box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+  width: 100%;
+}
+
+.submit-btn:hover {
+  background-color: #1d4ed8;
+  box-shadow: 0 6px 16px rgba(30, 58, 138, 0.3);
+}
+
+.submit-btn:active {
+  transform: scale(0.98);
+}
