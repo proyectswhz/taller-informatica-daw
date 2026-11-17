@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Taller Informática - Reparaciones</title>
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <!-- HEADER SUPERIOR -->
+    <header class="site-header">
+      <div class="header-container">
+        <div class="logo">
+          <a href="index.html">🔧 Taller Informático - DAW</a>
+        </div>
+        <nav class="main-nav">
+          <ul>
+            <li><a href="clientes.html">Clientes</a></li>
+            <li><a href="dispositivos.html">Dispositivos</a></li>
+            <li><a href="reparaciones.html" class="active">Reparaciones</a></li>
+            <li>
+              <a href="#" id="btnToggleForm" class="btn-nuevo-cliente"
+                >➕ Nueva Orden</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="dispositivos-layout">
+      <!-- BARRA DE BÚSQUEDA -->
+      <section class="search-bar-container">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Buscar por estado, cliente o descripción..."
+          />
+        </div>
+      </section>
+
+      <!-- SECCIÓN PRINCIPAL (Formulario colapsable + Listado en tabla) -->
+      <section class="content-grid single-column" id="mainGrid">
+        <!-- Formulario colapsable para Crear/Editar Orden -->
+        <div class="form-card hidden" id="formContainer">
+          <div class="form-header">
+            <h2 id="formTitle">Registrar Nueva Orden de Reparación</h2>
+            <button type="button" id="btnCloseForm" class="btn-close">✖</button>
+          </div>
+          <form id="order-form">
+            <label for="device">Dispositivo:</label>
+            <select
+              name="device"
+              id="device"
+              required
+              style="
+                padding: 0.75rem 1rem;
+                border: 1px solid #d1d5db;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                background-color: #faf8f5;
+                color: #1f2937;
+                width: 100%;
+                box-sizing: border-box;
+              "
+            >
+              <option value="">Seleccione un dispositivo...</option>
+            </select>
+
+            <label for="status">Estado de la Reparación:</label>
+            <select
+              name="status"
+              id="status"
+              required
+              style="
+                padding: 0.75rem 1rem;
+                border: 1px solid #d1d5db;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                background-color: #faf8f5;
+                color: #1f2937;
+                width: 100%;
+                box-sizing: border-box;
+              "
+            >
+              <option value="Pendiente">Pendiente</option>
+              <option value="En Proceso">En Proceso</option>
+              <option value="Completada">Completada</option>
+              <option value="Entregada">Entregada</option>
+            </select>
+
+            <label for="diagnosis">Diagnóstico / Acciones realizadas:</label>
+            <textarea
+              name="diagnosis"
+              id="diagnosis"
+              placeholder="Describe el diagnóstico técnico o reparación efectuada..."
+            ></textarea>
+
+            <label for="cost">Coste (€):</label>
+            <input
+              type="number"
+              step="0.01"
+              name="cost"
+              id="cost"
+              placeholder="Ej. 45.00"
+            />
+
+            <button type="submit" class="submit-btn">Guardar Orden</button>
+          </form>
+        </div>
+
+        <!-- Listado de reparaciones en tabla -->
+        <section class="table-card">
+          <h2>Listado de Órdenes de Reparación</h2>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Dispositivo / Modelo</th>
+                  <th>Cliente Propietario</th>
+                  <th>Estado</th>
+                  <th>Diagnóstico</th>
+                  <th>Coste</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-reparaciones-body">
+                <!-- Generado dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+          <div id="order-response-message" class="message-box"></div>
+        </section>
+      </section>
+
+      <!-- Indicador de estado del servidor -->
+      <div id="server-status" class="server-status-badge">
+        <span id="status-dot" class="status-dot checking"></span>
+        <span id="status-text">Comprobando servidor ...</span>
+      </div>
+
+      <!-- Pie de página -->
+      <footer class="dashboard-footer">
+        Taller Informático DAW &copy; 2026
+      </footer>
+    </main>
+
+    <script src="./js/reparacion.js" defer></script>
+  </body>
+</html>
