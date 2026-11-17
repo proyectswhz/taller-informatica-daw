@@ -17,56 +17,113 @@
           <ul>
             <li><a href="clientes.html">Clientes</a></li>
             <li><a href="reparaciones.html">Reparaciones</a></li>
+            <li>
+              <a href="#" id="btnToggleForm" class="btn-nuevo-cliente"
+                >➕ Nuevo Dispositivo</a
+              >
+            </li>
           </ul>
+        </nav>
       </div>
     </header>
+
     <!-- CONTENIDO PRINCIPAL -->
-     <main class="dispositivos-layout">
-        <!-- BARRA DE BÚSQUEDA -->
-         <section class="search-bar-container">
-            <div class="search-box">
-                <span class="search-icon">🔍</span>
-                <input
-                type="text"
-                id="searchInput"
-                placeholder="Buscar dispositivo por nombre, marca o modelo..."
-             />
-            </div>
-        </section>
-        <!-- SECCIÓN PRINCIPAL (Formulario colapsable + Listado en tabla) -->
-        <section class="content-grid single-column" id="mainGrid">
-            <!-- Formulario colapsable -->
-             <div class="form-card hidden" id="formContainer">
-                <div class="form-header">
-                    <h2>Registrar Nuevo Dispositivo</h2>
-                    <button type="button" id="btnCloseForm" class="btn-close">✖</button>
-                </div>
-                <form id="device-form">
-                    <label for="type">Tipo:</label>
-                    <input type="text" name="type" id="type" required />
+    <main class="dispositivos-layout">
+      <!-- BARRA DE BÚSQUEDA -->
+      <section class="search-bar-container">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Buscar dispositivo por marca, modelo o tipo..."
+          />
+        </div>
+      </section>
 
-                    <label for="brand">Marca:</label>
-                    <input type="text" name="brand" id="brand" required />
+      <!-- SECCIÓN PRINCIPAL (Formulario colapsable + Listado en tabla) -->
+      <section class="content-grid single-column" id="mainGrid">
+        <!-- Formulario colapsable -->
+        <div class="form-card hidden" id="formContainer">
+          <div class="form-header">
+            <h2 id="formTitle">Registrar Nuevo Dispositivo</h2>
+            <button type="button" id="btnCloseForm" class="btn-close">✖</button>
+          </div>
+          <form id="device-form">
+            <label for="customer">Cliente Propietario:</label>
+            <select
+              name="customer"
+              id="customer"
+              required
+              style="
+                padding: 0.75rem 1rem;
+                border: 1px solid #d1d5db;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                background-color: #faf8f5;
+                color: #1f2937;
+                width: 100%;
+                box-sizing: border-box;
+              "
+            >
+              <option value="">Seleccione un cliente...</option>
+            </select>
 
-                    <label for="model">Modelo:</label>
-                    <input type="text" name="model" id="model" required />
+            <label for="type">Tipo de Dispositivo:</label>
+            <input
+              type="text"
+              name="type"
+              id="type"
+              placeholder="Ej. Portátil, Sobremesa, Móvil..."
+              required
+            />
 
-                    <label for="serialNumber">Número de Serie:</label>
-                    <input type="text" name="serialNumber" id="serialNumber" required />
+            <label for="brand">Marca:</label>
+            <input
+              type="text"
+              name="brand"
+              id="brand"
+              placeholder="Ej. HP, Lenovo, ASUS..."
+              required
+            />
 
-                    <label for="observations">Observaciones:</label>
-                    <textarea name="observations" id="observations"></textarea>
+            <label for="model">Modelo:</label>
+            <input
+              type="text"
+              name="model"
+              id="model"
+              placeholder="Ej. Pavilion 15, ThinkPad..."
+              required
+            />
 
-                    <button type="submit" class="submit-btn">Guardar Dispositivo</button>
-                </form>
-            </div>
-        </section>
-            <!-- Listado de dispositivos en tabla -->
+            <label for="serialNumber">Número de Serie:</label>
+            <input
+              type="text"
+              name="serialNumber"
+              id="serialNumber"
+              placeholder="Ej. SN123456789"
+              required
+            />
+
+            <label for="observations">Observaciones / Avería:</label>
+            <textarea
+              name="observations"
+              id="observations"
+              placeholder="Describe la avería o estado del equipo..."
+            ></textarea>
+
+            <button type="submit" class="submit-btn">
+              Guardar Dispositivo
+            </button>
+          </form>
+        </div>
+
+        <!-- Listado de dispositivos en tabla -->
         <section class="table-card">
-            <h2>Listado de Dispositivos</h2>
-            <div class="table-responsive">
+          <h2>Listado de Dispositivos</h2>
+          <div class="table-responsive">
             <table>
-                <thead>
+              <thead>
                 <tr>
                   <th>Cliente</th>
                   <th>Tipo</th>
@@ -74,16 +131,19 @@
                   <th>Modelo</th>
                   <th>Número de Serie</th>
                   <th>Observaciones</th>
-                  <th>Acciones</th> <!-- <-- Añadido aquí -->
+                  <th>Acciones</th>
                 </tr>
               </thead>
-                <tbody id="tabla-dispositivos-body">
-                    <!-- Filas de dispositivos se generarán dinámicamente aquí -->
-                </tbody>
+              <tbody id="tabla-dispositivos-body">
+                <!-- Generado dinámicamente -->
+              </tbody>
             </table>
-            <div id="device-response-message" class="message-box"></div>
+          </div>
+          <div id="device-response-message" class="message-box"></div>
         </section>
-        <div id="server-status" class="server-status-badge">
+      </section>
+
+      <div id="server-status" class="server-status-badge">
         <span id="status-dot" class="status-dot checking"></span>
         <span id="status-text">Comprobando servidor ...</span>
       </div>
@@ -93,6 +153,7 @@
         Taller Informático DAW &copy; 2026
       </footer>
     </main>
+
     <script src="./js/dispositivos.js" defer></script>
   </body>
 </html>

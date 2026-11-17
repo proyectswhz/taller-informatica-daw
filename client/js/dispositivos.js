@@ -4,29 +4,55 @@ const URL_clientes =
   "https://taller-informatica-daw.onrender.com/api/customers";
 
 const tablaDispositivos = document.getElementById("tabla-dispositivos-body");
-const dispositivosForm = document.getElementById("device-form"); // Corregido: era client-form
+const dispositivosForm = document.getElementById("device-form");
 const formContainer = document.getElementById("formContainer");
 const mainGrid = document.getElementById("mainGrid");
 const btnToggleForm = document.getElementById("btnToggleForm");
 const btnCloseForm = document.getElementById("btnCloseForm");
-let editingDeviceId = null; // Variable para almacenar el ID del dispositivo que se está editando
+const selectCliente = document.getElementById("customer");
+const formTitle = document.getElementById("formTitle");
 
-let editandoId = null;
-// 1. Mostrar/Ocultar el formulario al hacer clic en "Nuevo Cliente"
+let editingDeviceId = null;
+
+// 1. Mostrar formulario para CREAR
 btnToggleForm.addEventListener("click", (e) => {
   e.preventDefault();
-  editandoId = null; // Limpiamos el ID por si veníamos de editar
+  editingDeviceId = null;
+  formTitle.textContent = "Registrar Nuevo Dispositivo";
+  dispositivosForm.reset();
   formContainer.classList.remove("hidden");
   mainGrid.classList.add("show-form");
 });
 
+// Ocultar formulario
 btnCloseForm.addEventListener("click", () => {
   formContainer.classList.add("hidden");
   mainGrid.classList.remove("show-form");
-  editandoId = null;
+  editingDeviceId = null;
   dispositivosForm.reset();
 });
-// 1. Cargar dispositivos al cargar la página
+
+// 2. Cargar clientes en el desplegable `<select>`
+async function cargarClientesEnSelect() {
+  try {
+    const response = await fetch(URL_clientes);
+    if (!response.ok) throw new Error("Error al obtener clientes");
+    const clientes = await response.json();
+
+    selectCliente.innerHTML =
+      '<option value="">Seleccione un cliente...</option>';
+    clientes.forEach((cliente) => {
+      const option = document.createElement("option");
+      option.value = cliente._id;
+      option.textContent = `${cliente.name} ${cliente.surname || ""} (DNI: ${cliente.dni})`;
+      selectCliente.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error al poblar clientes en el select:", error);
+  }
+}
+
+// 3. Cargar listado de dispositivos y asociarlos con su cliente
 async function cargarDispositivos() {
   try {
     const response = await fetch(URL_dispositivos);
@@ -38,10 +64,10 @@ async function cargarDispositivos() {
     const dispositivos = await response.json();
     const clientes = await responseClientes.json();
 
-    tablaDispositivos.innerHTML = ""; // Limpiar la tabla antes de llenarla
+    tablaDispositivos.innerHTML = "";
 
     dispositivos.forEach((dispositivo) => {
-      // Buscamos el cliente asociado (manejando si viene como objeto ID o string)
+      // Extraer correctamente el ID del cliente según venga en la BD
       const clienteId =
         dispositivo.customer?._id ||
         dispositivo.customer ||
@@ -73,7 +99,7 @@ async function cargarDispositivos() {
   }
 }
 
-// 2. Crear o actualizar dispositivo
+// 4. Crear o actualizar dispositivo (Submit)
 dispositivosForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -83,14 +109,12 @@ dispositivosForm.addEventListener("submit", async (event) => {
   try {
     let response;
     if (editingDeviceId) {
-      // Actualizar dispositivo existente
       response = await fetch(`${URL_dispositivos}/${editingDeviceId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dispositivoData),
       });
     } else {
-      // Crear nuevo dispositivo
       response = await fetch(URL_dispositivos, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -104,14 +128,14 @@ dispositivosForm.addEventListener("submit", async (event) => {
     editingDeviceId = null;
     formContainer.classList.add("hidden");
     mainGrid.classList.remove("show-form");
-    cargarDispositivos(); // Recargar la lista
+    cargarDispositivos();
   } catch (error) {
     console.error("Error al guardar el dispositivo:", error);
     alert("No se pudo guardar el dispositivo.");
   }
 });
 
-// 3. Cargar datos en el formulario para editar
+// 5. Cargar datos en el formulario para EDITAR
 window.editarDispositivo = async function (id) {
   try {
     const response = await fetch(`${URL_dispositivos}/${id}`);
@@ -119,7 +143,12 @@ window.editarDispositivo = async function (id) {
       throw new Error("Error al obtener los datos del dispositivo");
     const dispositivo = await response.json();
 
-    // Rellenamos los campos del formulario
+    // Rellenar campos
+    selectCliente.value =
+      dispositivo.customer?._id ||
+      dispositivo.customer ||
+      dispositivo.customerId ||
+      "";
     document.getElementById("type").value = dispositivo.type || "";
     document.getElementById("brand").value = dispositivo.brand || "";
     document.getElementById("model").value = dispositivo.model || "";
@@ -128,15 +157,19 @@ window.editarDispositivo = async function (id) {
     document.getElementById("observations").value =
       dispositivo.observations || "";
 
-    editingDeviceId = id; // Guardar el ID para saber que estamos editando
+    editingDeviceId = id;
+    formTitle.textContent = "Editar Dispositivo";
     formContainer.classList.remove("hidden");
     mainGrid.classList.add("show-form");
   } catch (error) {
-    console.error("Error al cargar los datos del dispositivo:", error);
+    console.error(
+      "Error al cargar los datos del dispositivo para editar:",
+      error,
+    );
   }
 };
 
-// 4. Eliminar dispositivo
+// 6. Eliminar dispositivo
 window.eliminarDispositivo = async function (id) {
   if (!confirm("¿Estás seguro de que deseas eliminar este dispositivo?"))
     return;
@@ -154,5 +187,6 @@ window.eliminarDispositivo = async function (id) {
   }
 };
 
-// Inicializar listado al cargar la página
+// Inicialización al cargar la página
+cargarClientesEnSelect();
 cargarDispositivos();
