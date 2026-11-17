@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Taller Reparación - Nueva Orden</title>
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <!-- Cabecera de navegación unificada -->
+    <header class="site-header">
+      <div class="header-container">
+        <div class="logo">
+          <a href="index.html">🔧 Taller DAW</a>
+        </div>
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html">Panel Principal</a></li>
+            <li>
+              <a href="nueva-reparacion.html" class="active">Nueva Orden</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+      <h1 class="titulo">Nueva Orden de Reparación</h1>
+
+      <div class="formulario-cliente">
+        <form id="client-form">
+          <label for="name">Nombre:</label>
+          <input type="text" name="name" id="name" required />
+
+          <label for="surname">Apellidos:</label>
+          <input type="text" name="surname" id="surname" required />
+
+          <label for="dni">DNI:</label>
+          <input type="text" name="dni" id="dni" required />
+
+          <label for="phone">Teléfono:</label>
+          <input type="number" name="phone" id="phone" required />
+
+          <label for="email">Email:</label>
+          <input type="email" name="email" id="email" required />
+
+          <label for="address">Dirección:</label>
+          <input type="text" name="address" id="address" required />
+
+          <button type="submit" class="submit-btn">Crear Orden</button>
+        </form>
+
+        <div id="response-message" class="message-box"></div>
+      </div>
+    </main>
+
+    <script src="./js/nueva-reparacion.js" defer></script>
+  </body>
+</html>

@@ -7,6 +7,22 @@
     <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body class="dashboard-body">
+    <!-- Cabecera de navegación unificada -->
+    <header class="site-header">
+      <div class="header-container">
+        <div class="logo">
+          <a href="index.html">🔧 Taller DAW</a>
+        </div>
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html" class="active">Panel Principal</a></li>
+            <li><a href="nueva-reparacion.html">Nueva Orden</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Contenido Principal del Dashboard -->
     <main class="dashboard-container">
       <h1>Gestión de Taller Informático</h1>
       <p class="subtitle">Selecciona una opción para comenzar</p>
@@ -14,20 +30,20 @@
       <div class="button-group-horizontal">
         <!-- Botón 1: Buscar cliente existente -->
         <a href="clientes.html" class="dashboard-btn">
-          <span>🔍</span>
-          Buscar Cliente
+          <span>👤</span>
+          Clientes
         </a>
 
         <!-- Botón 2: Iniciar el flujo de nueva reparación -->
-        <a href="nueva-reparacion.html" class="dashboard-btn">
+        <a href="nueva-reparacion.html" class="dashboard-btn primary">
           <span>➕</span>
-          Crear Orden
+          Nueva Orden
         </a>
 
         <!-- Botón 3: Ver el listado general de reparaciones -->
         <a href="reparaciones.html" class="dashboard-btn">
           <span>📋</span>
-          Ver Reparaciones
+          Reparaciones
         </a>
       </div>
     </main>
@@ -48,7 +64,6 @@
         const text = document.getElementById("status-text");
 
         try {
-          // Ajusta esta URL si tu ruta de health check es distinta (ej. /api/health)
           const response = await fetch(
             "https://taller-informatica-daw.onrender.com/api/health",
           );
