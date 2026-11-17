@@ -41,7 +41,7 @@
                     <h2>Registrar Nuevo Dispositivo</h2>
                     <button type="button" id="btnCloseForm" class="btn-close">✖</button>
                 </div>
-                <form id="client-form">
+                <form id="device-form">
                     <label for="type">Tipo:</label>
                     <input type="text" name="type" id="type" required />
 
@@ -67,15 +67,16 @@
             <div class="table-responsive">
             <table>
                 <thead>
-                    <tr>
-                        <th>Cliente</th>
-                        <th>Tipo</th>
-                        <th>Marca</th>
-                        <th>Modelo</th>
-                        <th>Número de Serie</th>
-                        <th>Observaciones</th>
-                    </tr>
-                </thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Tipo</th>
+                  <th>Marca</th>
+                  <th>Modelo</th>
+                  <th>Número de Serie</th>
+                  <th>Observaciones</th>
+                  <th>Acciones</th> <!-- <-- Añadido aquí -->
+                </tr>
+              </thead>
                 <tbody id="tabla-dispositivos-body">
                     <!-- Filas de dispositivos se generarán dinámicamente aquí -->
                 </tbody>

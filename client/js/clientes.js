@@ -122,7 +122,7 @@ clientForm.addEventListener("submit", async (e) => {
   }
 });
 
-// Boton editar: cargar datos del cliente en el formulario y lo despliegamos
+// Boton editar: cargar datos del cliente en el formulario y lo desplegamos
 async function editarCliente(id) {
   try {
     const response = await fetch(`${URL_RENDER}/${id}`);
