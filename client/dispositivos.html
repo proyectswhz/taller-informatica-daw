@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Taller Informática - Dispositivos</title>
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <!-- HEADER SUPERIOR -->
+    <header class="site-header">
+      <div class="header-container">
+        <div class="logo">
+          <a href="index.html">🔧 Taller Informático - DAW</a>
+        </div>
+        <nav class="main-nav">
+          <ul>
+            <li><a href="clientes.html">Clientes</a></li>
+            <li><a href="reparaciones.html">Reparaciones</a></li>
+          </ul>
+      </div>
+    </header>
+    <!-- CONTENIDO PRINCIPAL -->
+     <main class="dispositivos-layout">
+        <!-- BARRA DE BÚSQUEDA -->
+         <section class="search-bar-container">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input
+                type="text"
+                id="searchInput"
+                placeholder="Buscar dispositivo por nombre, marca o modelo..."
+             />
+            </div>
+        </section>
+        <!-- SECCIÓN PRINCIPAL (Formulario colapsable + Listado en tabla) -->
+        <section class="content-grid single-column" id="mainGrid">
+            <!-- Formulario colapsable -->
+             <div class="form-card hidden" id="formContainer">
+                <div class="form-header">
+                    <h2>Registrar Nuevo Dispositivo</h2>
+                    <button type="button" id="btnCloseForm" class="btn-close">✖</button>
+                </div>
+                <form id="client-form">
+                    <label for="type">Tipo:</label>
+                    <input type="text" name="type" id="type" required />
+
+                    <label for="brand">Marca:</label>
+                    <input type="text" name="brand" id="brand" required />
+
+                    <label for="model">Modelo:</label>
+                    <input type="text" name="model" id="model" required />
+
+                    <label for="serialNumber">Número de Serie:</label>
+                    <input type="text" name="serialNumber" id="serialNumber" required />
+
+                    <label for="observations">Observaciones:</label>
+                    <textarea name="observations" id="observations"></textarea>
+
+                    <button type="submit" class="submit-btn">Guardar Dispositivo</button>
+                </form>
+            </div>
+        </section>
+            <!-- Listado de dispositivos en tabla -->
+        <section class="table-card">
+            <h2>Listado de Dispositivos</h2>
+            <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Tipo</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Número de Serie</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-dispositivos-body">
+                    <!-- Filas de dispositivos se generarán dinámicamente aquí -->
+                </tbody>
+            </table>
+            <div id="device-response-message" class="message-box"></div>
+        </section>
+        <div id="server-status" class="server-status-badge">
+        <span id="status-dot" class="status-dot checking"></span>
+        <span id="status-text">Comprobando servidor ...</span>
+      </div>
+
+      <!-- Pie de página discreto -->
+      <footer class="dashboard-footer">
+        Taller Informático DAW &copy; 2026
+      </footer>
+    </main>
+    <script src="./js/dispositivos.js" defer></script>
+  </body>
+</html>
