@@ -1,0 +1,223 @@
+/* Estructura general para centrar el contenido en pantalla completa - Modo Claro */
+body.dashboard-body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f7f9fc; /* Fondo general luminoso */
+  color: #2d3748;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-container {
+  text-align: center;
+  padding: 3rem;
+  background-color: #fcfbf9; /* Contenedor en tono crema suave */
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+  max-width: 750px;
+  width: 90%;
+}
+
+.dashboard-container h1 {
+  font-size: 2.6rem;
+  margin-bottom: 0.5rem;
+  color: #1a365d; /* Azul marino profundo */
+  font-weight: 700;
+}
+
+.dashboard-container .subtitle {
+  color: #718096;
+  margin-bottom: 3rem;
+  font-size: 1.2rem;
+}
+
+/* Contenedor de botones en horizontal */
+.button-group-horizontal {
+  display: flex;
+  gap: 2rem; /* Más espacio entre los botones grandes */
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Estilo para los botones principales: más grandes, claros y en tonos crema/azul */
+/* Estilo base para los botones del menú: grandes, claros y en tonos crema */
+/* Estilo unificado para los tres botones: misma apariencia clara y en una sola columna horizontal */
+.dashboard-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  background-color: #fefdfb; /* Fondo crema muy claro y limpio */
+  color: #1a365d; /* Texto en azul corporativo elegante */
+  padding: 2rem 2.2rem;
+  border-radius: 16px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  border: 2px solid #cbd5e0; /* Borde idéntico para los tres */
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.03);
+  min-width: 170px;
+}
+
+.dashboard-btn span {
+  font-size: 2.5rem;
+}
+
+/* Efecto hover idéntico al pasar el ratón para todos por igual */
+.dashboard-btn:hover {
+  transform: translateY(-5px);
+  background-color: #ebf8ff; /* Fondo azul clarito muy suave */
+  border-color: #3182ce;
+  color: #2b6cb0;
+  box-shadow: 0 10px 20px rgba(49, 130, 206, 0.15);
+}
+
+/* El botón central mantiene la misma estruct/* ==========================================================================
+   Estilos Generales - Panel Principal (Modo Claro / Crema & Azul)
+   ========================================================================== */
+
+body.dashboard-body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f7f9fc; /* Fondo general muy suave, limpio y luminoso */
+  color: #2d3748; /* Texto principal oscuro y legible */
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-container {
+  text-align: center;
+  padding: 3rem;
+  background-color: #fcfbf9; /* Contenedor en tono crema suave */
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+  max-width: 800px;
+  width: 90%;
+  box-sizing: border-box;
+}
+
+.dashboard-container h1 {
+  font-size: 2.6rem;
+  margin-bottom: 0.5rem;
+  color: #1a365d; /* Azul marino profundo */
+  font-weight: 700;
+}
+
+.dashboard-container .subtitle {
+  color: #718096; /* Gris neutro elegante */
+  margin-bottom: 3rem;
+  font-size: 1.2rem;
+}
+
+/* ==========================================================================
+   Contenedor de Botones (Grid - 1 sola fila horizontal de 3 columnas)
+   ========================================================================== */
+
+.button-group-horizontal {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columnas idénticas */
+  gap: 1.5rem; /* Espacio uniforme entre los botones */
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* ==========================================================================
+   Estilo de los Botones (Claros, idénticos y en tonos crema / azul)
+   ========================================================================== */
+
+.dashboard-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  background-color: #fefdfb; /* Fondo crema muy claro y limpio */
+  color: #1a365d; /* Texto en azul corporativo elegante */
+  padding: 2.2rem 1.5rem; /* Amplio espacio interno */
+  border-radius: 16px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  border: 2px solid #cbd5e0; /* Borde idéntico para los tres */
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.03);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.dashboard-btn span {
+  font-size: 2.5rem; /* Tamaño de los iconos */
+}
+
+/* Efecto hover idéntico para los tres al pasar el ratón */
+.dashboard-btn:hover {
+  transform: translateY(-5px);
+  background-color: #ebf8ff; /* Fondo azul clarito muy suave */
+  border-color: #3182ce;
+  color: #2b6cb0;
+  box-shadow: 0 10px 20px rgba(49, 130, 206, 0.15);
+}
+.dashboard-btn.primary {
+  background-color: #fefdfb;
+  color: #1a365d;
+  border-color: #3182ce; /* Borde en azul moderno pero manteniendo la estética clara */
+}
+
+.dashboard-btn.primary:hover {
+  background-color: #ebf8ff;
+  color: #2b6cb0;
+  box-shadow: 0 10px 20px rgba(49, 130, 206, 0.15);
+}
+/* ==========================================================================
+   Indicador de Estado del Servidor y Footer
+   ========================================================================== */
+
+.server-status-badge {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fefdfb;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid #cbd5e0;
+  font-size: 0.85rem;
+  color: #4a5568;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.checking {
+  background-color: #ecc94b;
+} /* Amarillo mientras comprueba */
+.status-dot.online {
+  background-color: #48bb78;
+} /* Verde si responde bien */
+.status-dot.offline {
+  background-color: #f56565;
+} /* Rojo si falla */
+
+.dashboard-footer {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  font-size: 0.85rem;
+  color: #a0aec0;
+}

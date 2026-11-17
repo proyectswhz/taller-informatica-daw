@@ -59,6 +59,9 @@ Connect();
 app.use("/api/customers", customerRoutes);
 app.use("/api/devices", deviceRoutes);
 app.use("/api/workOrders", workOrdersRoutes);
+app.get("/api/health", (req, res) => {
+  res.json({ status: "online", timestamp: new Date() });
+});
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 5000;
