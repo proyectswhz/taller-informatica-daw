@@ -532,3 +532,8 @@ tr:hover td {
   font-size: 0.85rem;
   color: #a0aec0;
 }
+.btn-reparaciones {
+  background-color: #e0e7ff;
+  color: #3730a3;
+  border: 1px solid #c7d2fe;
+}

@@ -45,6 +45,7 @@ async function cargarClientes() {
             <td>
                 <div class="action-buttons">
                     <button onclick="abrirDispositivo('${cliente._id}')" class="btn-action btn-device" title="Añadir Dispositivo">💻</button>
+                    <button onclick="verReparacionesCliente('${cliente._id}')" class="btn-action btn-reparaciones" title="Ver Reparaciones">📋</button>
                     <button onclick="editarCliente('${cliente._id}')" class="btn-action btn-edit" title="Editar Cliente">✏️</button>
                      <button onclick="eliminarCliente('${cliente._id}')" class="btn-action btn-delete" title="Borrar Cliente">🗑️</button>
                 </div>
@@ -129,6 +130,12 @@ async function editarCliente(id) {
     console.error("Error al cargar los datos del cliente: ", error);
     alert("No se pudieron cargar los datos del cliente. Inténtalo de nuevo.");
   }
+}
+
+// BOTÓN VER REPARACIONES DEL CLIENTE: Redirige al listado de órdenes del cliente
+function verReparacionesCliente(id) {
+  // Puedes redirigir a una vista general o específica pasando el ID por URL
+  window.location.href = `reparaciones.html?clienteId=${id}`;
 }
 
 async function eliminarCliente(id) {
