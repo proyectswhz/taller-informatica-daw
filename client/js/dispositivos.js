@@ -33,8 +33,8 @@ async function cargarDispositivos() {
                 <td>${dispositivo.serialNumber}</td>
                 <td>${dispositivo.observations}</td>
                 <td>
-                    <button  onclick="editarDispositivo('${dispositivo._id}')" class="btn-edit" data-id="${dispositivo._id}" title="Editar Dispositivo">✏️</button>
-                    <button onclick="eliminarDispositivo('${dispositivo._id}')" class="btn-delete" data-id="${dispositivo._id}" title="Eliminar Dispositivo">🗑️</button>
+                    <button  onclick="editarDispositivo('${dispositivo._id}')" class="btn-action btn-edit" data-id="${dispositivo._id}" title="Editar Dispositivo">✏️</button>
+                    <button onclick="eliminarDispositivo('${dispositivo._id}')" class="btn-action btn-delete" data-id="${dispositivo._id}" title="Eliminar Dispositivo">🗑️</button>
                 </td>
             `;
       tablaDispositivos.appendChild(row);
