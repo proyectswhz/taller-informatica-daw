@@ -50,7 +50,7 @@
         try {
           // Ajusta esta URL si tu ruta de health check es distinta (ej. /api/health)
           const response = await fetch(
-            "https://taller-informatica-daw.onrender.com/api",
+            "https://taller-informatica-daw.onrender.com/api/health",
           );
           if (response.ok) {
             dot.className = "status-dot online";
