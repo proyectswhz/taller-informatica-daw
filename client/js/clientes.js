@@ -291,14 +291,14 @@ async function checkServerStatus() {
 
     if (response.ok || response.status < 500) {
       statusDot.className = "status-dot online";
-      statusText.textContent = "Servidor activo";
+      statusText.textContent = "Servidor Online";
     } else {
       statusDot.className = "status-dot offline";
       statusText.textContent = "Servidor con problemas";
     }
   } catch (error) {
     statusDot.className = "status-dot offline";
-    statusText.textContent = "Servidor inactivo (Render dormido)";
+    statusText.textContent = "Servidor Offline";
     console.error("Error al comprobar el estado del servidor:", error);
   }
 }
