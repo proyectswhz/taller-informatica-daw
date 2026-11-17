@@ -16,6 +16,9 @@ const deviceResponseMessage = document.getElementById(
   "device-response-message",
 );
 
+// Referencia al input de búsqueda de la vista
+const searchInput = document.getElementById("searchInput");
+
 let editandoId = null;
 // 1. Mostrar/Ocultar el formulario al hacer clic en "Nuevo Cliente"
 btnToggleForm.addEventListener("click", (e) => {
@@ -223,5 +226,49 @@ async function eliminarCliente(id) {
     }
   }
 }
+
+// Evento para buscar en tiempo real mientras el usuario escribe
+searchInput.addEventListener("input", async (e) => {
+  const searchTerm = e.target.value.trim();
+
+  try {
+    // Llamada al endpoint enviando el parámetro que lee tu req.query.cliente
+    const response = await fetch(
+      `${URL_RENDER}?cliente=${encodeURIComponent(searchTerm)}`,
+    );
+    if (!response.ok) throw new Error("Error en la búsqueda");
+
+    const clientes = await response.json();
+
+    // Volvemos a pintar la tabla con los resultados filtrados
+    tablaClientes.innerHTML = "";
+
+    if (clientes.length === 0) {
+      tablaClientes.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #9ca3af;">No se encontraron clientes</td></tr>`;
+      return;
+    }
+
+    clientes.forEach((cliente) => {
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td><strong>${cliente.name} ${cliente.surname}</strong></td>
+        <td>${cliente.dni}</td>
+        <td>${cliente.phone}</td>
+        <td>${cliente.email}</td>
+        <td>
+          <div class="action-buttons">
+            <button onclick="abrirDispositivo('${cliente._id}')" class="btn-action btn-device" title="Añadir Dispositivo">💻</button>
+            <button onclick="verReparacionesCliente('${cliente._id}')" class="btn-action btn-reparaciones" title="Ver Reparaciones">📋</button>
+            <button onclick="editarCliente('${cliente._id}')" class="btn-action btn-edit" title="Editar Cliente">✏️</button>
+            <button onclick="eliminarCliente('${cliente._id}')" class="btn-action btn-delete" title="Borrar Cliente">🗑️</button>
+          </div>
+        </td>
+      `;
+      tablaClientes.appendChild(fila);
+    });
+  } catch (error) {
+    console.error("Error al buscar clientes:", error);
+  }
+});
 
 cargarClientes();

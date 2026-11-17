@@ -4,6 +4,21 @@ import Customer from "../models/customer.js";
 
 export const obtenerClientes = async (req, res) => {
   try {
+    const clienteParametro = req.query.cliente; // Obtener el parámetro de búsqueda del cliente
+
+    if (clienteParametro && clienteParametro.trim() !== "") {
+      // Si se proporciona un parámetro de búsqueda, buscar clientes por nombre o apellido
+      const clientes = await Customer.find({
+        $or: [
+          { name: { $regex: clienteParametro, $options: "i" } },
+          { dni: { $regex: clienteParametro, $options: "i" } },
+          { phone: { $regex: clienteParametro, $options: "i" } },
+        ],
+      });
+      res.json(clientes);
+      return;
+    }
+
     const clientes = await Customer.find();
     res.json(clientes);
   } catch (error) {
