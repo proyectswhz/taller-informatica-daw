@@ -1,127 +1,133 @@
-# 🛠️ Gestor de Órdenes de Trabajo y Reparaciones - Taller de Informática
+# 🔧 Gestor de Taller Informático — DAW
 
-Sistema de gestión interna B2B para talleres de reparación de equipos informáticos. Permite registrar clientes, asociar equipos en revisión y llevar el seguimiento del flujo de trabajo de las órdenes de reparación desde la entrada hasta la entrega.
+Aplicación web full-stack para la gestión integral de un taller informático: administración de **Clientes**, registro de **Dispositivos** asociados y control operativo de **Órdenes de Reparación** (`WorkOrders`), con diseño _responsive_ y conexión a API REST.
 
 ---
 
-## 🚀 Tecnologías Utilizadas
+## 📋 Características principales
 
-### Backend
+- **Panel principal (`index.html`):** Acceso directo a los módulos del taller y comprobación visual del estado del servidor.
+- **Gestión de clientes (`clientes.html` / `clientes.js`):** CRUD completo, búsqueda en tiempo real (`?cliente=...`) por nombre, DNI o teléfono, modal para añadir dispositivos y acceso rápido a las reparaciones del cliente.
+- **Gestión de dispositivos (`dispositivos.html` / `dispositivos.js`):** Registro y edición de equipos (`type`, `brand`, `model`, `serialNumber`, `observations`) vinculados a un cliente, con formulario colapsable y tabla _responsive_.
+- **Órdenes de reparación (`reparaciones.html` / `reparaciones.js`):** Creación y actualización de órdenes (`customer`, `device`, `issueDescription`, `status`, `estimatedCost`, `finalCost`, `technicianNotes`) con estados (`Pendiente`, `En reparación`, `Finalizado`, `Entregado`).
+- **Interfaz adaptable:** Diseño en tonos crema (`#f7f5f0`) y azul corporativo (`#1e3a8a`) con soporte _responsive_ para escritorio, tablet y móvil.
 
-- **Node.js** con **Express** (API RESTful)
-- **MongoDB** con **Mongoose** (Base de datos NoSQL con relaciones via `ObjectId`)
-- **CORS** & **dotenv** (Seguridad y configuración de entorno)
+---
+
+## 🛠️ Stack tecnológico
 
 ### Frontend
 
-- **HTML5** & **CSS3 puro** (Sin frameworks como Tailwind/Bootstrap)
-- **JavaScript Vainilla** (Arquitectura de páginas separadas usando `fetch` API)
+- **HTML5**, **CSS3** (diseño _responsive_ con _media queries_ y tablas con _scroll_ horizontal) y **JavaScript vanilla (ES6+)** (`fetch`, `async/await`, `FormData`).
 
-### Infraestructura y Despliegue
+### Backend y Base de Datos
 
-- **Backend**: Render (Web Service)
-- **Frontend**: Vercel (Static Hosting)
-- **Base de Datos**: MongoDB local (Desarrollo) / MongoDB Atlas (Producción)
+- **Node.js** y **Express** (API REST).
+- **MongoDB** con **Mongoose** (esquemas `Customer`, `Device` y `WorkOrder` relacionados mediante `ObjectId`).
+
+### Despliegue y herramientas
+
+- **Backend:** Render (`https://taller-informatica-daw.onrender.com`)
+- **Base de datos:** MongoDB Atlas
+- **Frontend:** Vercel / servidor estático
+- **Control de versiones:** Git y GitHub
 
 ---
 
-## 📁 Estructura del Proyecto
+## 📁 Estructura del proyecto
 
 ```text
-taller-pc/
+taller-informatica-daw/
 ├── client/                  # Frontend estático
-│   ├── index.html           # Dashboard principal y estado de reparaciones
-│   ├── nueva-orden.html     # Formulario de alta de clientes y equipos
 │   ├── css/
-│   │   └── styles.css       # Estilos CSS puros del taller
-│   └── js/
-│       ├── api.js           # Configuración de URLs dinámicas (Local / Render)
-│       └── app.js           # Lógica de manipulación del DOM y llamadas fetch
-├── server/                  # Backend Node.js / Express
-│   ├── config/
-│   │   └── db.js            # Conexión a MongoDB (Local / Atlas)
-│   ├── controllers/         # Lógica de controladores CRUD
+│   │   └── style.css        # Estilos globales y responsive
+│   ├── js/
+│   │   ├── clientes.js      # Lógica CRUD, buscador y estado del servidor
+│   │   ├── dispositivos.js  # Lógica CRUD de dispositivos y select de clientes
+│   │   └── reparaciones.js  # Lógica de órdenes de reparación y estados
+│   ├── index.html           # Panel principal
+│   ├── clientes.html        # Vista de clientes
+│   ├── dispositivos.html    # Vista de dispositivos
+│   └── reparaciones.html    # Vista de reparaciones
+├── server/                  # Backend Node.js + Express + Mongoose
+│   ├── controllers/         # Lógica de negocio (clientes, dispositivos, órdenes)
 │   ├── models/              # Esquemas Mongoose (Customer, Device, WorkOrder)
-│   ├── routes/              # Endpoints de la API REST
-│   └── index.js             # Punto de entrada del servidor Express
-├── TODO.md                  # Seguimiento del estado del proyecto
-├── .env.example             # Plantilla de variables de entorno
-└── README.md                # Documentación del proyecto
+│   ├── routes/              # Rutas de la API REST
+│   ├── .env.example         # Plantilla de variables de entorno
+│   ├── package.json
+│   └── server.js            # Punto de entrada del servidor
+└── README.md
 ```
 
 ---
 
-## 🗄️ Modelo de Datos
+## ⚙️ Instalación y puesta en marcha en local
 
-1. **`Customer` (Clientes):** Nombre, teléfono, email, DNI/CIF.
-2. **`Device` (Equipos):** Tipo (_Portátil, Sobremesa, Consola_), marca, modelo, número de serie.
-3. **`WorkOrder` (Órdenes de Trabajo):** Relación con Cliente y Equipo, descripción de la avería, estado (_Recibido_, _En Diagnóstico_, _Esperando Repuesto_, _Reparado_, _Entregado_), desglose de piezas y horas de mano de obra.
+### 1. Clonar el repositorio
+
+```bash
+git clone <URL-DEL-REPOSITORIO>
+cd taller-informatica-daw
+```
+
+### 2. Configurar y arrancar el Backend (`/server`)
+
+```bash
+cd server
+npm install
+```
+
+Crea un archivo `.env` dentro de `server/` (te puedes basar en `.env.example`) con las variables necesarias:
+
+```env
+PORT=3000
+MONGODB_URI=mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/<nombre_bd>?retryWrites=true&w=majority
+CORS_ORIGIN=http://localhost:5500
+```
+
+Inicia el servidor en desarrollo o producción:
+
+```bash
+npm run dev   # o npm start, según el script configurado en package.json
+```
+
+El backend quedará disponible en `http://localhost:3000` (o el puerto definido en `PORT`).
+
+### 3. Ejecutar el Frontend (`/client`)
+
+Al tratarse de archivos HTML, CSS y JavaScript estáticos, los puedes abrir con **Live Server** en VS Code o servir la carpeta `client/` con cualquier servidor estático:
+
+```bash
+npx serve client
+```
+
+> **Nota sobre la URL de la API:** En los archivos `clientes.js`, `dispositivos.js` y `reparaciones.js` está configurada la URL desplegada en Render (`https://taller-informatica-daw.onrender.com/api/...`). Si vas a probar contra tu backend local, cambia esa constante a `http://localhost:3000/api/...` y asegúrate de tener habilitado **CORS** en Express para el origen de tu frontend.
 
 ---
 
-## 🗺️ Fases del Proyecto (Hoja de Ruta DAW)
+## 🔌 Endpoints principales de la API
 
-- [x] **Fase 1: Entorno e Infraestructura Local**
-  - [x] Estructura de carpetas `/server` y `/client`.
-  - [x] Configuración del repositorio Git e inicialización del proyecto.
-  - [x] Conexión a MongoDB local (`mongodb://localhost:27017/taller-pc-db`).
-
-- [ ] **Fase 2: Backend Core y Modelos de Taller**
-  - [x] Esquemas Mongoose: `Customer.js`, `Device.js` y `WorkOrder.js`.
-  - Controlador y endpoints CRUD de órdenes de trabajo.
-  - Configuración del middleware `cors`.
-
-- [ ] **Fase 3: Desarrollo del Frontend Local**
-  - Maquetación con HTML5 y CSS puro (`index.html`, `nueva-orden.html`).
-  - Consumo de la API local con JS Vainilla (`fetch`).
-
-- [ ] **Fase 4: Preparación para Producción**
-  - Parametrización con variables de entorno (`dotenv`).
-  - Alternancia dinámica entre API local (`http://localhost:5000/api`) y API remota.
-
-- [ ] **Fase 5: Despliegue en la Nube**
-  - Migración de base de datos a **MongoDB Atlas**.
-  - Despliegue de la API REST en **Render**.
-  - Despliegue del cliente estático en **Vercel**.
-
-- [ ] **Fase 6: Seguridad y Hardening**
-  - Manejo de excepciones, restricciones CORS finales y códigos HTTP adecuados.
-
-- [ ] **Fase 7: Pruebas E2E y Ensayos**
-  - Validación del flujo completo de creación y actualización de órdenes en producción.
-
-- [ ] **Fase 8: Documentación y Memoria DAW**
-  - Redacción de la memoria del proyecto, diagramas ER y preparación de la defensa ante el tribunal.
+| Recurso      | Método   | Endpoint              | Descripción                                                                 |
+| :----------- | :------- | :-------------------- | :-------------------------------------------------------------------------- |
+| Clientes     | `GET`    | `/api/customers`      | Lista clientes (admite `?cliente=` para filtrar por nombre, DNI o teléfono) |
+| Clientes     | `POST`   | `/api/customers`      | Crea un nuevo cliente                                                       |
+| Clientes     | `PUT`    | `/api/customers/:id`  | Actualiza un cliente existente                                              |
+| Clientes     | `DELETE` | `/api/customers/:id`  | Elimina un cliente                                                          |
+| Dispositivos | `GET`    | `/api/devices`        | Lista todos los dispositivos                                                |
+| Dispositivos | `GET`    | `/api/devices/:id`    | Obtiene un dispositivo por ID                                               |
+| Dispositivos | `POST`   | `/api/devices`        | Registra un dispositivo asociado a un cliente                               |
+| Dispositivos | `PUT`    | `/api/devices/:id`    | Actualiza un dispositivo                                                    |
+| Dispositivos | `DELETE` | `/api/devices/:id`    | Elimina un dispositivo                                                      |
+| Reparaciones | `GET`    | `/api/workOrders`     | Lista todas las órdenes de reparación                                       |
+| Reparaciones | `GET`    | `/api/workOrders/:id` | Obtiene una orden por ID                                                    |
+| Reparaciones | `POST`   | `/api/workOrders`     | Crea una nueva orden de reparación                                          |
+| Reparaciones | `PUT`    | `/api/workOrders/:id` | Actualiza estado, costes, diagnóstico o notas                               |
+| Reparaciones | `DELETE` | `/api/workOrders/:id` | Elimina una orden de reparación                                             |
 
 ---
 
-## ⚙️ Configuración del Entorno Local
+## ☁️ Despliegue en producción
 
-1. **Clonar el repositorio y ubicar la carpeta del proyecto:**
-
-   ```bash
-   cd taller-pc
-   ```
-
-2. **Configurar el Backend:**
-
-   ```bash
-   cd server
-   npm install
-   ```
-
-3. **Crear el archivo `.env` en `/server` con los siguientes parámetros:**
-
-   ```env
-   PORT=5000
-   MONGO_URI=mongodb://localhost:27017/taller-pc-db
-   ```
-
-4. **Iniciar el servidor en modo desarrollo:**
-
-   ```bash
-   npm start
-   ```
-
-5. **Abrir el Frontend:**
-   Abrir `client/index.html` en el navegador o mediante una extensión de servidor local tipo _Live Server_.
+1. **Base de datos:** Clúster creado en **MongoDB Atlas** con usuario de base de datos y acceso de red configurado.
+2. **Backend (Render):** Servicio web conectado al repositorio apuntando al directorio `server`, con `MONGODB_URI` y `CORS_ORIGIN` configurados en las variables de entorno de Render. Ten en cuenta que en planes gratuitos de Render el servidor puede tardar unos segundos en despertar tras un periodo de inactividad (reflejado en el indicador de estado del frontend).
+3. **Frontend (Vercel):** Despliegue del directorio `client` sirviendo los archivos estáticos conectados a los endpoints de Render.
