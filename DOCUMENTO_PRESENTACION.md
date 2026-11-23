@@ -17,14 +17,14 @@ Su diseño es **responsive**, ligero y cuenta con una arquitectura desacoplada q
 A continuación se facilitan todos los enlaces y datos técnicos para probar y evaluar la aplicación:
 
 - **🚀 Aplicación Web (Frontend):**  
-  [https://taller-informatica-daw.vercel.app](https://taller-informatica-daw.vercel.app) _(o enlace a tu servidor de producción/Vercel)_
+  [https://taller-informatica-daw-client.vercel.app/](https://taller-informatica-daw-client.vercel.app/)
 
 - **⚙️ API REST (Backend en Render):**  
   [https://taller-informatica-daw.onrender.com/api/workOrders](https://taller-informatica-daw.onrender.com/api/workOrders)  
   _Endpoints activos:_ `/api/customers`, `/api/devices`, `/api/workOrders`
 
 - **📁 Repositorio de Código (GitHub):**  
-  [https://github.com/projectswhz/taller-informatica-daw](https://github.com/projectswhz/taller-informatica-daw)
+  [https://github.com/proyectswhz/taller-informatica-daw](https://github.com/proyectswhz/taller-informatica-daw)
 
 ---
 
