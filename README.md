@@ -1,4 +1,4 @@
-# 🛠️ Gestor de Órdenes de Trabajo y Reparaciones - Taller de Informática
+# Gestor de Órdenes de Trabajo y Reparaciones - Taller de Informática
 
 Sistema de gestión interna B2B para talleres de reparación de equipos informáticos. Permite registrar clientes, asociar equipos en revisión y llevar el seguimiento del flujo de trabajo de las órdenes de reparación desde la entrada hasta la entrega.
 
@@ -43,8 +43,7 @@ taller-pc/
 │   ├── controllers/         # Lógica de controladores CRUD
 │   ├── models/              # Esquemas Mongoose (Customer, Device, WorkOrder)
 │   ├── routes/              # Endpoints de la API REST
-│   └── index.js             # Punto de entrada del servidor Express
-├── TODO.md                  # Seguimiento del estado del proyecto
+│   └── index.js             # Punto de entrada del servidor Express                  # Seguimiento del estado del proyecto
 ├── .env.example             # Plantilla de variables de entorno
 └── README.md                # Documentación del proyecto
 ```
@@ -66,28 +65,28 @@ taller-pc/
   - [x] Configuración del repositorio Git e inicialización del proyecto.
   - [x] Conexión a MongoDB local (`mongodb://localhost:27017/taller-pc-db`).
 
-- [ ] **Fase 2: Backend Core y Modelos de Taller**
+- [x] **Fase 2: Backend Core y Modelos de Taller**
   - [x] Esquemas Mongoose: `Customer.js`, `Device.js` y `WorkOrder.js`.
   - Controlador y endpoints CRUD de órdenes de trabajo.
   - Configuración del middleware `cors`.
 
-- [ ] **Fase 3: Desarrollo del Frontend Local**
+- [x] **Fase 3: Desarrollo del Frontend Local**
   - Maquetación con HTML5 y CSS puro (`index.html`, `nueva-orden.html`).
   - Consumo de la API local con JS Vainilla (`fetch`).
 
-- [ ] **Fase 4: Preparación para Producción**
+- [x] **Fase 4: Preparación para Producción**
   - Parametrización con variables de entorno (`dotenv`).
   - Alternancia dinámica entre API local (`http://localhost:5000/api`) y API remota.
 
-- [ ] **Fase 5: Despliegue en la Nube**
+- [x] **Fase 5: Despliegue en la Nube**
   - Migración de base de datos a **MongoDB Atlas**.
   - Despliegue de la API REST en **Render**.
   - Despliegue del cliente estático en **Vercel**.
 
-- [ ] **Fase 6: Seguridad y Hardening**
+- [x] **Fase 6: Seguridad y Hardening**
   - Manejo de excepciones, restricciones CORS finales y códigos HTTP adecuados.
 
-- [ ] **Fase 7: Pruebas E2E y Ensayos**
+- [x] **Fase 7: Pruebas E2E y Ensayos**
   - Validación del flujo completo de creación y actualización de órdenes en producción.
 
 - [ ] **Fase 8: Documentación y Memoria DAW**
