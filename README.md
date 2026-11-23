@@ -1,4 +1,6 @@
-# 🔧 Gestor de Taller Informático — DAW
+# Gestor de Órdenes de Trabajo y Reparaciones - Taller de Informática
+
+> > > > > > > 35e19efa1292a00f666179349871d15582eb57c1
 
 Aplicación web full-stack para la gestión integral de un taller informático: administración de **Clientes**, registro de **Dispositivos** asociados y control operativo de **Órdenes de Reparación** (`WorkOrders`), con diseño _responsive_ y conexión a API REST.
 
