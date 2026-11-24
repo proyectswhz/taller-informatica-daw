@@ -15,9 +15,9 @@
         </div>
         <nav class="main-nav">
           <ul>
-            <li><a href="clientes.html">Clientes</a></li>
+            <li><a href="clientes.html" class="active">Clientes</a></li>
             <li><a href="dispositivos.html">Dispositivos</a></li>
-            <li><a href="reparaciones.html" class="active">Reparaciones</a></li>
+            <li><a href="reparaciones.html">Reparaciones</a></li>
             <li>
               <a href="#" id="btnToggleForm" class="btn-nuevo-cliente"
                 >➕ Nuevo Cliente</a
@@ -47,7 +47,7 @@
         <!-- Columna Izquierda: Formulario (Oculto por defecto con clase hidden) -->
         <aside class="form-card hidden" id="formContainer">
           <div class="form-header">
-            <h2>Registrar Nuevo Cliente</h2>
+            <h2 id="clientFormTitle">Registrar Nuevo Cliente</h2>
             <button type="button" id="btnCloseForm" class="btn-close">✖</button>
           </div>
           <form id="client-form">
@@ -61,7 +61,7 @@
             <input type="text" name="dni" id="dni" required />
 
             <label for="phone">Teléfono:</label>
-            <input type="number" name="phone" id="phone" required />
+            <input type="text" name="phone" id="phone" required />
 
             <label for="email">Email:</label>
             <input type="email" name="email" id="email" required />
@@ -74,7 +74,7 @@
           <div id="response-message" class="message-box"></div>
         </aside>
 
-        <!-- Columna Derecha: Listado en Tabla con los 3 botones -->
+        <!-- Columna Derecha: Listado en Tabla -->
         <section class="table-card">
           <h2>Listado de Clientes</h2>
           <div class="table-responsive">
@@ -82,9 +82,6 @@
               <thead>
                 <tr>
                   <th>Nombre y Apellidos</th>
-                  <th>DNI</th>
-                  <th>Teléfono</th>
-                  <th>Email</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -95,6 +92,30 @@
           </div>
         </section>
       </div>
+
+      <!-- MODAL PARA VER PERFIL COMPLETO DEL CLIENTE -->
+      <div id="profileModal" class="modal-overlay hidden">
+        <div class="modal-card">
+          <div class="form-header">
+            <h2>Perfil del Cliente</h2>
+            <button type="button" id="btnCloseProfileModal" class="btn-close">
+              ✖
+            </button>
+          </div>
+          <div
+            id="profileDetails"
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 0.75rem;
+              line-height: 1.5;
+            "
+          >
+            <!-- Datos cargados dinámicamente desde JavaScript -->
+          </div>
+        </div>
+      </div>
+
       <!-- MODAL PARA AÑADIR DISPOSITIVO -->
       <div id="deviceModal" class="modal-overlay hidden">
         <div class="modal-card">
@@ -145,17 +166,6 @@
               rows="3"
               placeholder="Describe el problema o estado del equipo..."
               required
-              style="
-                padding: 0.75rem 1rem;
-                border: 1px solid #d1d5db;
-                border-radius: 8px;
-                font-size: 0.95rem;
-                background-color: #faf8f5;
-                color: #1f2937;
-                resize: vertical;
-                width: 100%;
-                box-sizing: border-box;
-              "
             ></textarea>
 
             <button
@@ -169,6 +179,7 @@
           <div id="device-response-message" class="message-box"></div>
         </div>
       </div>
+
       <div id="server-status" class="server-status-badge">
         <span id="status-dot" class="status-dot checking"></span>
         <span id="status-text">Comprobando servidor ...</span>

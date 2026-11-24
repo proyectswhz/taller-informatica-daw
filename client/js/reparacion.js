@@ -13,6 +13,7 @@ const btnCloseForm = document.getElementById("btnCloseForm");
 const selectCustomer = document.getElementById("customer");
 const selectDevice = document.getElementById("device");
 const formTitle = document.getElementById("formTitle");
+const searchInput = document.getElementById("searchInput");
 
 // Leer filtro de cliente desde la URL si viene desde clientes.html
 const urlParams = new URLSearchParams(window.location.search);
@@ -21,6 +22,15 @@ const clienteIdFiltro = urlParams.get("clienteId");
 let editingOrderId = null;
 let listaClientes = [];
 let listaDispositivos = [];
+let reparacionesCache = [];
+
+const prioridadEstado = {
+  Pendiente: 0,
+  "En reparación": 1,
+  Finalizado: 2,
+  Entregada: 3,
+  Entregado: 3,
+};
 
 // Mostrar formulario para CREAR
 btnToggleForm.addEventListener("click", (e) => {
@@ -28,6 +38,10 @@ btnToggleForm.addEventListener("click", (e) => {
   editingOrderId = null;
   formTitle.textContent = "Registrar Nueva Orden de Reparación";
   orderForm.reset();
+  if (clienteIdFiltro) {
+    selectCustomer.value = clienteIdFiltro;
+    selectCustomer.dispatchEvent(new Event("change"));
+  }
   formContainer.classList.remove("hidden");
   mainGrid.classList.add("show-form");
 });
@@ -92,97 +106,133 @@ selectCustomer.addEventListener("change", (e) => {
   });
 });
 
-// Cargar listado de órdenes en la tabla (filtrado por clienteId si existe en la URL)
+function resolverDatosOrden(orden) {
+  const devId = orden.device?._id || orden.device;
+  const dispositivo = listaDispositivos.find((d) => d._id === devId);
+
+  let nombreCliente = "N/A";
+  let infoDisp = "Dispositivo desconocido";
+  let cId = orden.customer?._id || orden.customer || "";
+
+  if (dispositivo) {
+    infoDisp = `${dispositivo.type} (${dispositivo.brand} ${dispositivo.model})`;
+    cId =
+      dispositivo.customer?._id ||
+      dispositivo.customer ||
+      dispositivo.customerId ||
+      cId;
+  }
+
+  const cliente = listaClientes.find((c) => c._id === cId);
+  if (cliente) {
+    nombreCliente = `${cliente.name} ${cliente.surname || ""}`.trim();
+  }
+
+  return { infoDisp, nombreCliente, cId };
+}
+
+function pintarReparaciones(textoBusqueda = "") {
+  const termino = textoBusqueda.trim().toLowerCase();
+  let lista = [...reparacionesCache];
+
+  if (clienteIdFiltro) {
+    lista = lista.filter((orden) => {
+      const { cId } = resolverDatosOrden(orden);
+      return cId === clienteIdFiltro;
+    });
+  }
+
+  if (termino) {
+    lista = lista.filter((orden) => {
+      const { infoDisp, nombreCliente } = resolverDatosOrden(orden);
+      const estado = (orden.status || "").toLowerCase();
+      const averia = (orden.issueDescription || "").toLowerCase();
+      const diagnostico = (orden.technicianNotes || "").toLowerCase();
+
+      return (
+        estado.includes(termino) ||
+        nombreCliente.toLowerCase().includes(termino) ||
+        infoDisp.toLowerCase().includes(termino) ||
+        averia.includes(termino) ||
+        diagnostico.includes(termino)
+      );
+    });
+  }
+
+  // Ordenar siempre priorizando "Pendiente" primero
+  lista.sort((a, b) => {
+    const prioA = prioridadEstado[a.status] ?? 99;
+    const prioB = prioridadEstado[b.status] ?? 99;
+    return prioA - prioB;
+  });
+
+  tablaReparaciones.innerHTML = "";
+
+  if (lista.length === 0) {
+    tablaReparaciones.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align: center; color: #6b7280;">
+          ${
+            termino
+              ? "No se encontraron órdenes que coincidan con la búsqueda."
+              : clienteIdFiltro
+                ? "Este cliente no tiene órdenes de reparación registradas."
+                : "No hay órdenes de reparación registradas."
+          }
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  lista.forEach((orden) => {
+    const { infoDisp, nombreCliente } = resolverDatosOrden(orden);
+
+    // Clases para el badge de estado
+    let badgeClass = "status-pendiente";
+    if (orden.status === "En reparación") badgeClass = "status-proceso";
+    if (orden.status === "Finalizado") badgeClass = "status-completada";
+    if (orden.status === "Entregada" || orden.status === "Entregado")
+      badgeClass = "status-entregada";
+
+    const diagnostico = orden.technicianNotes?.trim() || "Sin diagnóstico aún";
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td><strong>${infoDisp}</strong></td>
+      <td>${nombreCliente}</td>
+      <td><span class="status-badge ${badgeClass}">${orden.status}</span></td>
+      <td>${orden.issueDescription || "-"}</td>
+      <td>${diagnostico}</td>
+      <td>${orden.finalCost ? `${orden.finalCost} €` : orden.estimatedCost ? `${orden.estimatedCost} € (Est.)` : "0.00 €"}</td>
+      <td>
+        <div class="action-buttons">
+          <button onclick="editarReparacion('${orden._id}')" class="btn-action btn-edit" title="Editar Orden">✏️</button>
+          <button onclick="eliminarReparacion('${orden._id}')" class="btn-action btn-delete" title="Eliminar Orden">🗑️</button>
+        </div>
+      </td>
+    `;
+    tablaReparaciones.appendChild(row);
+  });
+}
+
+// Cargar listado de órdenes en la tabla
 async function cargarReparaciones() {
   try {
     const response = await fetch(URL_workOrders);
     if (!response.ok) throw new Error("Error al obtener las órdenes");
 
-    let reparaciones = await response.json();
-
-    if (clienteIdFiltro) {
-      reparaciones = reparaciones.filter((orden) => {
-        const devId = orden.device?._id || orden.device;
-        const dispositivo = listaDispositivos.find((d) => d._id === devId);
-        const ordenCustomerId = orden.customer?._id || orden.customer;
-        const devCustomerId =
-          dispositivo?.customer?._id ||
-          dispositivo?.customer ||
-          dispositivo?.customerId;
-
-        return (
-          ordenCustomerId === clienteIdFiltro ||
-          devCustomerId === clienteIdFiltro
-        );
-      });
-    }
-
-    tablaReparaciones.innerHTML = "";
-
-    if (reparaciones.length === 0) {
-      tablaReparaciones.innerHTML = `
-        <tr>
-          <td colspan="7" style="text-align: center; color: #6b7280;">
-            ${clienteIdFiltro ? "Este cliente no tiene órdenes de reparación registradas." : "No hay órdenes de reparación registradas."}
-          </td>
-        </tr>
-      `;
-      return;
-    }
-
-    reparaciones.forEach((orden) => {
-      // Resolver dispositivo y cliente
-      const devId = orden.device?._id || orden.device;
-      const dispositivo = listaDispositivos.find((d) => d._id === devId);
-
-      let nombreCliente = "N/A";
-      let infoDisp = "Dispositivo desconocido";
-
-      if (dispositivo) {
-        infoDisp = `${dispositivo.type} (${dispositivo.brand} ${dispositivo.model})`;
-        const cId =
-          dispositivo.customer?._id ||
-          dispositivo.customer ||
-          dispositivo.customerId;
-        const cliente = listaClientes.find((c) => c._id === cId);
-        if (cliente) nombreCliente = `${cliente.name} ${cliente.surname || ""}`;
-      } else if (orden.customer) {
-        const cliente = listaClientes.find(
-          (c) => c._id === (orden.customer?._id || orden.customer),
-        );
-        if (cliente) nombreCliente = `${cliente.name} ${cliente.surname || ""}`;
-      }
-
-      // Clases para el badge de estado
-      let badgeClass = "status-pendiente";
-      if (orden.status === "En reparación") badgeClass = "status-proceso";
-      if (orden.status === "Finalizado") badgeClass = "status-completada";
-      if (orden.status === "Entregada" || orden.status === "Entregado")
-        badgeClass = "status-entregada";
-
-      const diagnostico =
-        orden.technicianNotes?.trim() || "Sin diagnóstico aún";
-
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td><strong>${infoDisp}</strong></td>
-        <td>${nombreCliente}</td>
-        <td><span class="status-badge ${badgeClass}">${orden.status}</span></td>
-        <td>${orden.issueDescription || "-"}</td>
-        <td>${diagnostico}</td>
-        <td>${orden.finalCost ? `${orden.finalCost} €` : orden.estimatedCost ? `${orden.estimatedCost} € (Est.)` : "0.00 €"}</td>
-        <td>
-          <div class="action-buttons">
-            <button onclick="editarReparacion('${orden._id}')" class="btn-action btn-edit" title="Editar Orden">✏️</button>
-            <button onclick="eliminarReparacion('${orden._id}')" class="btn-action btn-delete" title="Eliminar Orden">🗑️</button>
-          </div>
-        </td>
-      `;
-      tablaReparaciones.appendChild(row);
-    });
+    reparacionesCache = await response.json();
+    pintarReparaciones(searchInput ? searchInput.value : "");
   } catch (error) {
     console.error("Error al cargar reparaciones:", error);
   }
+}
+
+if (searchInput) {
+  searchInput.addEventListener("input", (e) => {
+    pintarReparaciones(e.target.value);
+  });
 }
 
 // Crear o actualizar orden (Submit)
@@ -193,20 +243,16 @@ orderForm.addEventListener("submit", async (event) => {
   const ordenData = Object.fromEntries(formData.entries());
 
   try {
-    let response;
-    if (editingOrderId) {
-      response = await fetch(`${URL_workOrders}/${editingOrderId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(ordenData),
-      });
-    } else {
-      response = await fetch(URL_workOrders, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(ordenData),
-      });
-    }
+    const url = editingOrderId
+      ? `${URL_workOrders}/${editingOrderId}`
+      : URL_workOrders;
+    const method = editingOrderId ? "PUT" : "POST";
+
+    const response = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(ordenData),
+    });
 
     if (!response.ok) {
       const errJson = await response.json().catch(() => ({}));

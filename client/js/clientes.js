@@ -1,11 +1,19 @@
 const URL_RENDER = "https://taller-informatica-daw.onrender.com/api/customers";
+const URL_DEVICES = "https://taller-informatica-daw.onrender.com/api/devices";
+
 const tablaClientes = document.getElementById("tabla-clientes-body");
 const btnToggleForm = document.getElementById("btnToggleForm");
 const btnCloseForm = document.getElementById("btnCloseForm");
 const formContainer = document.getElementById("formContainer");
 const mainGrid = document.getElementById("mainGrid");
 const clientForm = document.getElementById("client-form");
+const clientFormTitle = document.getElementById("clientFormTitle");
 const responseMessage = document.getElementById("response-message");
+
+// Referencias del Modal de Perfil
+const profileModal = document.getElementById("profileModal");
+const btnCloseProfileModal = document.getElementById("btnCloseProfileModal");
+const profileDetails = document.getElementById("profileDetails");
 
 // Referencias del Modal de Dispositivos
 const deviceModal = document.getElementById("deviceModal");
@@ -16,17 +24,20 @@ const deviceResponseMessage = document.getElementById(
   "device-response-message",
 );
 
-const serverStatus = document.getElementById("server-status");
-
 // Referencia al input de búsqueda de la vista
 const searchInput = document.getElementById("searchInput");
 
 let editandoId = null;
+let clientesCache = [];
+
 // 1. Mostrar/Ocultar el formulario al hacer clic en "Nuevo Cliente"
 btnToggleForm.addEventListener("click", (e) => {
   e.preventDefault();
-  editandoId = null; // Limpiamos el ID por si veníamos de editar
-  clientForm.reset(); // Limpiamos los campos
+  editandoId = null;
+  clientFormTitle.textContent = "Registrar Nuevo Cliente";
+  responseMessage.className = "message-box";
+  responseMessage.textContent = "";
+  clientForm.reset();
   formContainer.classList.remove("hidden");
   mainGrid.classList.add("show-form");
 });
@@ -37,38 +48,56 @@ btnCloseForm.addEventListener("click", () => {
   editandoId = null;
   clientForm.reset();
 });
-// 2. Cargar clientes desde la API de render y mostrarlos en la tabla
+
+// Pintar la tabla solo con Nombre y Apellidos + Acciones
+function pintarTablaClientes(clientes) {
+  tablaClientes.innerHTML = "";
+
+  if (!clientes || clientes.length === 0) {
+    tablaClientes.innerHTML = `<tr><td colspan="2" style="text-align: center; color: #9ca3af;">No se encontraron clientes</td></tr>`;
+    return;
+  }
+
+  clientes.forEach((cliente) => {
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td>
+        <button
+          type="button"
+          onclick="verDispositivosCliente('${cliente._id}')"
+          style="background: none; border: none; color: #1e3a8a; font-weight: 700; font-size: 0.95rem; cursor: pointer; text-align: left; padding: 0;"
+          title="Ver dispositivos de este cliente"
+        >
+          ${cliente.name} ${cliente.surname}
+        </button>
+      </td>
+      <td>
+        <div class="action-buttons">
+          <button onclick="verPerfilCliente('${cliente._id}')" class="btn-action btn-device" title="Ver Perfil">👤</button>
+          <button onclick="abrirDispositivo('${cliente._id}')" class="btn-action btn-device" title="Añadir Dispositivo">💻</button>
+          <button onclick="verReparacionesCliente('${cliente._id}')" class="btn-action btn-reparaciones" title="Ver Reparaciones">📋</button>
+          <button onclick="editarCliente('${cliente._id}')" class="btn-action btn-edit" title="Editar Cliente">✏️</button>
+          <button onclick="eliminarCliente('${cliente._id}')" class="btn-action btn-delete" title="Borrar Cliente">🗑️</button>
+        </div>
+      </td>
+    `;
+    tablaClientes.appendChild(fila);
+  });
+}
+
+// 2. Cargar clientes desde la API de Render
 async function cargarClientes() {
   try {
     const response = await fetch(URL_RENDER);
-
     if (!response.ok) {
       throw new Error("Error al cargar los clientes");
     }
 
     const clientes = await response.json();
-    tablaClientes.innerHTML = "";
-
-    clientes.forEach((cliente) => {
-      const fila = document.createElement("tr");
-      fila.innerHTML = `
-            <td><strong>${cliente.name} ${cliente.surname}</strong></td>
-            <td>${cliente.dni}</td>
-            <td>${cliente.phone}</td>
-            <td>${cliente.email}</td>
-            <td>
-                <div class="action-buttons">
-                    <button onclick="abrirDispositivo('${cliente._id}')" class="btn-action btn-device" title="Añadir Dispositivo">💻</button>
-                    <button onclick="verReparacionesCliente('${cliente._id}')" class="btn-action btn-reparaciones" title="Ver Reparaciones">📋</button>
-                    <button onclick="editarCliente('${cliente._id}')" class="btn-action btn-edit" title="Editar Cliente">✏️</button>
-                     <button onclick="eliminarCliente('${cliente._id}')" class="btn-action btn-delete" title="Borrar Cliente">🗑️</button>
-                </div>
-            </td>
-        `;
-      tablaClientes.appendChild(fila);
-    });
+    clientesCache = clientes;
+    pintarTablaClientes(clientes);
   } catch (error) {
-    console.error("Error de red: ", error);
+    console.error("Error de red:", error);
   }
 }
 
@@ -77,29 +106,23 @@ clientForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const datos = {
-    name: document.getElementById("name").value,
-    surname: document.getElementById("surname").value,
-    dni: document.getElementById("dni").value,
-    phone: document.getElementById("phone").value,
-    email: document.getElementById("email").value,
-    address: document.getElementById("address").value,
+    name: document.getElementById("name").value.trim(),
+    surname: document.getElementById("surname").value.trim(),
+    dni: document.getElementById("dni").value.trim(),
+    phone: document.getElementById("phone").value.trim(),
+    email: document.getElementById("email").value.trim(),
+    address: document.getElementById("address").value.trim(),
   };
 
   try {
-    let response;
-    if (editandoId) {
-      response = await fetch(`${URL_RENDER}/${editandoId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(datos),
-      });
-    } else {
-      response = await fetch(URL_RENDER, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(datos),
-      });
-    }
+    const url = editandoId ? `${URL_RENDER}/${editandoId}` : URL_RENDER;
+    const method = editandoId ? "PUT" : "POST";
+
+    const response = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(datos),
+    });
 
     if (response.ok) {
       responseMessage.textContent = editandoId
@@ -112,8 +135,8 @@ clientForm.addEventListener("submit", async (e) => {
       mainGrid.classList.remove("show-form");
       cargarClientes();
     } else {
-      const errorData = await response.json();
-      responseMessage.textContent = `Error: ${errorData.message}`;
+      const errorData = await response.json().catch(() => ({}));
+      responseMessage.textContent = `Error: ${errorData.message || "No se pudo guardar el cliente"}`;
       responseMessage.className = "message-box error";
     }
   } catch (error) {
@@ -122,12 +145,43 @@ clientForm.addEventListener("submit", async (e) => {
   }
 });
 
-// Redirige a la vista de reparaciones pasando el ID del cliente en la URL
+// Redirige a la vista de dispositivos filtrando por clienteId
+function verDispositivosCliente(clienteId) {
+  window.location.href = `dispositivos.html?clienteId=${clienteId}`;
+}
+
+// Redirige a la vista de reparaciones filtrando por clienteId
 function verReparacionesCliente(clienteId) {
   window.location.href = `reparaciones.html?clienteId=${clienteId}`;
 }
 
-// Boton editar: cargar datos del cliente en el formulario y lo desplegamos
+// Abre el modal con todos los datos del cliente
+function verPerfilCliente(clienteId) {
+  const cliente = clientesCache.find((c) => c._id === clienteId);
+  if (!cliente) return;
+
+  profileDetails.innerHTML = `
+    <p><strong>Nombre:</strong> ${cliente.name || "-"}</p>
+    <p><strong>Apellidos:</strong> ${cliente.surname || "-"}</p>
+    <p><strong>DNI:</strong> ${cliente.dni || "-"}</p>
+    <p><strong>Teléfono:</strong> ${cliente.phone || "-"}</p>
+    <p><strong>Email:</strong> ${cliente.email || "-"}</p>
+    <p><strong>Dirección:</strong> ${cliente.address || "No especificada"}</p>
+  `;
+  profileModal.classList.remove("hidden");
+}
+
+btnCloseProfileModal.addEventListener("click", () => {
+  profileModal.classList.add("hidden");
+});
+
+profileModal.addEventListener("click", (e) => {
+  if (e.target === profileModal) {
+    profileModal.classList.add("hidden");
+  }
+});
+
+// Botón editar: cargar datos del cliente en el formulario
 async function editarCliente(id) {
   try {
     const response = await fetch(`${URL_RENDER}/${id}`);
@@ -135,66 +189,64 @@ async function editarCliente(id) {
       throw new Error("Error al obtener los datos del cliente");
     }
     const cliente = await response.json();
-    document.getElementById("name").value = cliente.name;
-    document.getElementById("surname").value = cliente.surname;
-    document.getElementById("dni").value = cliente.dni;
-    document.getElementById("phone").value = cliente.phone;
-    document.getElementById("email").value = cliente.email;
-    document.getElementById("address").value = cliente.address;
+
+    document.getElementById("name").value = cliente.name || "";
+    document.getElementById("surname").value = cliente.surname || "";
+    document.getElementById("dni").value = cliente.dni || "";
+    document.getElementById("phone").value = cliente.phone || "";
+    document.getElementById("email").value = cliente.email || "";
+    document.getElementById("address").value = cliente.address || "";
 
     editandoId = id;
+    clientFormTitle.textContent = "Editar Cliente";
+    responseMessage.className = "message-box";
+    responseMessage.textContent = "";
     formContainer.classList.remove("hidden");
     mainGrid.classList.add("show-form");
   } catch (error) {
-    console.error("Error al cargar los datos del cliente: ", error);
+    console.error("Error al cargar los datos del cliente:", error);
     alert("No se pudieron cargar los datos del cliente. Inténtalo de nuevo.");
   }
 }
 
-// BOTÓN VER REPARACIONES DEL CLIENTE: Redirige al listado de órdenes del cliente
+// Modal añadir dispositivo
 function abrirDispositivo(clienteId) {
-  modalCustomerId.value = clienteId; // Guardamos el ID en el input oculto
+  modalCustomerId.value = clienteId;
   deviceForm.reset();
   deviceResponseMessage.className = "message-box";
   deviceResponseMessage.textContent = "";
   deviceModal.classList.remove("hidden");
 }
 
-// Cerrar el modal
 btnCloseDeviceModal.addEventListener("click", () => {
   deviceModal.classList.add("hidden");
 });
 
-// Cerrar modal haciendo clic fuera de la tarjeta
 deviceModal.addEventListener("click", (e) => {
   if (e.target === deviceModal) {
     deviceModal.classList.add("hidden");
   }
 });
 
-// Enviar el nuevo dispositivo a la API
 deviceForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const clienteId = modalCustomerId.value;
   const deviceData = {
-    customer: clienteId, // Clave exacta del modelo de Mongoose
-    type: document.getElementById("deviceType").value,
-    brand: document.getElementById("deviceBrand").value,
-    model: document.getElementById("deviceModel").value,
-    serialNumber: document.getElementById("serialNumber").value,
-    observations: document.getElementById("deviceObservations").value,
+    customer: clienteId,
+    type: document.getElementById("deviceType").value.trim(),
+    brand: document.getElementById("deviceBrand").value.trim(),
+    model: document.getElementById("deviceModel").value.trim(),
+    serialNumber: document.getElementById("serialNumber").value.trim(),
+    observations: document.getElementById("deviceObservations").value.trim(),
   };
 
   try {
-    const response = await fetch(
-      "https://taller-informatica-daw.onrender.com/api/devices",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(deviceData),
-      },
-    );
+    const response = await fetch(URL_DEVICES, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(deviceData),
+    });
 
     if (response.ok) {
       deviceResponseMessage.textContent = "¡Dispositivo añadido con éxito!";
@@ -203,7 +255,7 @@ deviceForm.addEventListener("submit", async (e) => {
         deviceModal.classList.add("hidden");
       }, 1500);
     } else {
-      const err = await response.json();
+      const err = await response.json().catch(() => ({}));
       deviceResponseMessage.textContent = `Error: ${err.message || "No se pudo registrar el dispositivo."}`;
       deviceResponseMessage.className = "message-box error";
     }
@@ -226,7 +278,7 @@ async function eliminarCliente(id) {
         alert("Error al eliminar el cliente. Inténtalo de nuevo.");
       }
     } catch (error) {
-      console.error("Error al eliminar el cliente: ", error);
+      console.error("Error al eliminar el cliente:", error);
       alert(
         "Error de red al intentar eliminar el cliente. Inténtalo de nuevo.",
       );
@@ -234,45 +286,19 @@ async function eliminarCliente(id) {
   }
 }
 
-// Evento para buscar en tiempo real mientras el usuario escribe
+// Buscar en tiempo real mientras el usuario escribe
 searchInput.addEventListener("input", async (e) => {
   const searchTerm = e.target.value.trim();
 
   try {
-    // Llamada al endpoint enviando el parámetro que lee tu req.query.cliente
     const response = await fetch(
       `${URL_RENDER}?cliente=${encodeURIComponent(searchTerm)}`,
     );
     if (!response.ok) throw new Error("Error en la búsqueda");
 
     const clientes = await response.json();
-
-    // Volvemos a pintar la tabla con los resultados filtrados
-    tablaClientes.innerHTML = "";
-
-    if (clientes.length === 0) {
-      tablaClientes.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #9ca3af;">No se encontraron clientes</td></tr>`;
-      return;
-    }
-
-    clientes.forEach((cliente) => {
-      const fila = document.createElement("tr");
-      fila.innerHTML = `
-        <td><strong>${cliente.name} ${cliente.surname}</strong></td>
-        <td>${cliente.dni}</td>
-        <td>${cliente.phone}</td>
-        <td>${cliente.email}</td>
-        <td>
-          <div class="action-buttons">
-            <button onclick="abrirDispositivo('${cliente._id}')" class="btn-action btn-device" title="Añadir Dispositivo">💻</button>
-            <button onclick="verReparacionesCliente('${cliente._id}')" class="btn-action btn-reparaciones" title="Ver Reparaciones">📋</button>
-            <button onclick="editarCliente('${cliente._id}')" class="btn-action btn-edit" title="Editar Cliente">✏️</button>
-            <button onclick="eliminarCliente('${cliente._id}')" class="btn-action btn-delete" title="Borrar Cliente">🗑️</button>
-          </div>
-        </td>
-      `;
-      tablaClientes.appendChild(fila);
-    });
+    clientesCache = clientes;
+    pintarTablaClientes(clientes);
   } catch (error) {
     console.error("Error al buscar clientes:", error);
   }
@@ -284,14 +310,12 @@ async function checkServerStatus() {
 
   if (!statusDot || !statusText) return;
 
-  // URL base de tu API (quitando /api/customers para probar la raíz o haciendo HEAD/GET)
-  const urlRoot = "https://taller-informatica-daw.onrender.com/api/health"; // Endpoint de salud que puedes crear en tu backend
+  const urlRoot = "https://taller-informatica-daw.onrender.com/api/health";
 
   try {
     statusDot.className = "status-dot checking";
     statusText.textContent = "Conectando con servidor...";
 
-    // Hacemos una petición rápida al servidor
     const response = await fetch(urlRoot, { method: "GET" });
 
     if (response.ok || response.status < 500) {
@@ -307,8 +331,6 @@ async function checkServerStatus() {
     console.error("Error al comprobar el estado del servidor:", error);
   }
 }
-
-// Ejecutar la comprobación al iniciar la vista de clientes
 
 cargarClientes();
 checkServerStatus();
