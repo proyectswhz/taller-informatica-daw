@@ -210,7 +210,6 @@ body.dashboard-body .dashboard-container {
   border: 1px solid #e7dfd3;
   box-shadow: 0 10px 25px rgba(30, 58, 138, 0.06);
   width: 100%;
-  box-sizing: border-box;
 }
 
 .formulario-cliente {
@@ -271,7 +270,6 @@ form select {
   color: #1f2937;
   transition: all 0.25s ease;
   width: 100%;
-  box-sizing: border-box;
 }
 
 form textarea {
@@ -332,7 +330,7 @@ form select:focus {
 }
 
 /* ==========================================================================
-   5. Layouts de Vistas (Clientes y Dispositivos)
+   5. Layouts de Vistas (Clientes, Dispositivos y Reparaciones)
    ========================================================================== */
 .clientes-layout,
 .dispositivos-layout {
@@ -342,7 +340,6 @@ form select:focus {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  box-sizing: border-box;
 }
 
 .search-bar-container {
@@ -396,11 +393,14 @@ form select:focus {
    6. Tablas y Botones de Acción
    ========================================================================== */
 .table-responsive {
+  width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
   width: 100%;
+  min-width: 650px;
   border-collapse: collapse;
   text-align: left;
   font-size: 0.95rem;
@@ -412,6 +412,7 @@ th {
   padding: 0.85rem;
   font-weight: 600;
   border-bottom: 2px solid #e5e0d8;
+  white-space: nowrap;
 }
 
 td {
@@ -498,7 +499,8 @@ tr:hover td {
   box-shadow: 0 15px 35px rgba(30, 58, 138, 0.15);
   width: 90%;
   max-width: 500px;
-  box-sizing: border-box;
+  max-height: 90vh;
+  overflow-y: auto;
   animation: modalScaleUp 0.25s ease-out;
 }
 
@@ -541,11 +543,12 @@ tr:hover td {
 }
 
 .status-badge {
-  padding: 0.3rem 0.6rem;
+  padding: 0.3rem 0.65rem;
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
   display: inline-block;
+  white-space: nowrap;
 }
 
 .status-pendiente {
@@ -605,11 +608,12 @@ tr:hover td {
 }
 
 .dashboard-footer {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
+  margin-top: auto;
+  padding: 1.5rem 1rem;
   font-size: 0.85rem;
-  color: #a0aec0;
+  color: #9ca3af;
+  text-align: center;
+  width: 100%;
 }
 
 /* ==========================================================================
@@ -617,11 +621,6 @@ tr:hover td {
    ========================================================================== */
 
 @media (max-width: 768px) {
-  /* 1. Ajustes generales de contenedores y márgenes */
-  body {
-    padding: 0 0.5rem;
-  }
-
   .header-container {
     padding: 0.75rem 1rem;
     flex-direction: column;
@@ -640,11 +639,11 @@ tr:hover td {
     padding: 0.4rem 0.5rem;
   }
 
-  /* 2. Layouts principales y Grids de una columna */
   .clientes-layout,
   .dispositivos-layout {
     width: 100%;
-    margin: 1rem auto;
+    padding: 0 0.5rem;
+    margin: 1rem auto 4rem;
     gap: 1rem;
   }
 
@@ -652,7 +651,6 @@ tr:hover td {
     grid-template-columns: 1fr;
   }
 
-  /* Tarjetas y formularios adaptados al ancho del móvil */
   .form-card,
   .table-card,
   .formulario-cliente {
@@ -660,7 +658,6 @@ tr:hover td {
     border-radius: 12px;
   }
 
-  /* 3. Panel Dashboard Index (Botones grandes en columna única o 2 columnas compactas) */
   .button-group-horizontal {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -684,7 +681,6 @@ tr:hover td {
     font-size: 2rem;
   }
 
-  /* 4. Buscador adaptado */
   .search-box {
     padding: 0.5rem 1rem;
   }
@@ -693,15 +689,8 @@ tr:hover td {
     font-size: 0.9rem;
   }
 
-  /* 5. Tablas responsive con scroll horizontal fluido */
-  .table-responsive {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
   table {
-    min-width: 600px; /* Forzamos un ancho mínimo para que las columnas no se apretujen */
+    min-width: 600px;
   }
 
   th,
@@ -710,7 +699,6 @@ tr:hover td {
     font-size: 0.85rem;
   }
 
-  /* 6. Botones de acción en tabla más compactos en móvil */
   .action-buttons {
     gap: 0.2rem;
   }
@@ -720,7 +708,6 @@ tr:hover td {
     font-size: 0.8rem;
   }
 
-  /* 7. Ocultar badges fijos molestos en pantallas muy pequeñas si tapan contenido */
   .server-status-badge {
     bottom: 10px;
     right: 10px;
@@ -729,10 +716,7 @@ tr:hover td {
   }
 
   .dashboard-footer {
-    position: static;
-    margin-top: 2rem;
-    text-align: center;
-    padding-bottom: 1rem;
+    padding-bottom: 3.5rem;
   }
 }
 
