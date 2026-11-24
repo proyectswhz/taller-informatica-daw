@@ -1,5 +1,16 @@
-const URL_RENDER = "https://taller-informatica-daw.onrender.com/api/customers";
-const URL_DEVICES = "https://taller-informatica-daw.onrender.com/api/devices";
+const esLocal =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+
+const API_BASE = esLocal
+  ? "http://localhost:5000/api" // Cambia 3000 si tu backend local usa otro puerto
+  : "https://taller-informatica-daw.onrender.com/api";
+
+const URL_RENDER = `${API_BASE}/customers`;
+const URL_clientes = `${API_BASE}/customers`;
+const URL_dispositivos = `${API_BASE}/devices`;
+const URL_devices = `${API_BASE}/devices`;
+const URL_workOrders = `${API_BASE}/workOrders`;
 
 const tablaClientes = document.getElementById("tabla-clientes-body");
 const btnToggleForm = document.getElementById("btnToggleForm");
