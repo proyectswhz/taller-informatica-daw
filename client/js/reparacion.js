@@ -14,6 +14,10 @@ const selectCustomer = document.getElementById("customer");
 const selectDevice = document.getElementById("device");
 const formTitle = document.getElementById("formTitle");
 
+// Leer filtro de cliente desde la URL si viene desde clientes.html
+const urlParams = new URLSearchParams(window.location.search);
+const clienteIdFiltro = urlParams.get("clienteId");
+
 let editingOrderId = null;
 let listaClientes = [];
 let listaDispositivos = [];
@@ -56,6 +60,12 @@ async function cargarCatalogos() {
       opt.textContent = `${c.name} ${c.surname || ""} (DNI: ${c.dni})`;
       selectCustomer.appendChild(opt);
     });
+
+    // Si venimos filtrando por clienteId, preseleccionarlo en el formulario
+    if (clienteIdFiltro) {
+      selectCustomer.value = clienteIdFiltro;
+      selectCustomer.dispatchEvent(new Event("change"));
+    }
   } catch (error) {
     console.error("Error al cargar catálogos:", error);
   }
@@ -82,14 +92,43 @@ selectCustomer.addEventListener("change", (e) => {
   });
 });
 
-// Cargar listado de órdenes en la tabla
+// Cargar listado de órdenes en la tabla (filtrado por clienteId si existe en la URL)
 async function cargarReparaciones() {
   try {
     const response = await fetch(URL_workOrders);
     if (!response.ok) throw new Error("Error al obtener las órdenes");
 
-    const reparaciones = await response.json();
+    let reparaciones = await response.json();
+
+    if (clienteIdFiltro) {
+      reparaciones = reparaciones.filter((orden) => {
+        const devId = orden.device?._id || orden.device;
+        const dispositivo = listaDispositivos.find((d) => d._id === devId);
+        const ordenCustomerId = orden.customer?._id || orden.customer;
+        const devCustomerId =
+          dispositivo?.customer?._id ||
+          dispositivo?.customer ||
+          dispositivo?.customerId;
+
+        return (
+          ordenCustomerId === clienteIdFiltro ||
+          devCustomerId === clienteIdFiltro
+        );
+      });
+    }
+
     tablaReparaciones.innerHTML = "";
+
+    if (reparaciones.length === 0) {
+      tablaReparaciones.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align: center; color: #6b7280;">
+            ${clienteIdFiltro ? "Este cliente no tiene órdenes de reparación registradas." : "No hay órdenes de reparación registradas."}
+          </td>
+        </tr>
+      `;
+      return;
+    }
 
     reparaciones.forEach((orden) => {
       // Resolver dispositivo y cliente
@@ -118,7 +157,8 @@ async function cargarReparaciones() {
       let badgeClass = "status-pendiente";
       if (orden.status === "En reparación") badgeClass = "status-proceso";
       if (orden.status === "Finalizado") badgeClass = "status-completada";
-      if (orden.status === "Entregada") badgeClass = "status-entregada";
+      if (orden.status === "Entregada" || orden.status === "Entregado")
+        badgeClass = "status-entregada";
 
       const row = document.createElement("tr");
       row.innerHTML = `

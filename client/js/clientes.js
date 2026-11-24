@@ -122,6 +122,11 @@ clientForm.addEventListener("submit", async (e) => {
   }
 });
 
+// Redirige a la vista de reparaciones pasando el ID del cliente en la URL
+function verReparacionesCliente(clienteId) {
+  window.location.href = `reparaciones.html?clienteId=${clienteId}`;
+}
+
 // Boton editar: cargar datos del cliente en el formulario y lo desplegamos
 async function editarCliente(id) {
   try {
