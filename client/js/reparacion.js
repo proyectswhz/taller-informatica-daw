@@ -122,7 +122,7 @@ async function cargarReparaciones() {
     if (reparaciones.length === 0) {
       tablaReparaciones.innerHTML = `
         <tr>
-          <td colspan="6" style="text-align: center; color: #6b7280;">
+          <td colspan="7" style="text-align: center; color: #6b7280;">
             ${clienteIdFiltro ? "Este cliente no tiene órdenes de reparación registradas." : "No hay órdenes de reparación registradas."}
           </td>
         </tr>
@@ -160,12 +160,16 @@ async function cargarReparaciones() {
       if (orden.status === "Entregada" || orden.status === "Entregado")
         badgeClass = "status-entregada";
 
+      const diagnostico =
+        orden.technicianNotes?.trim() || "Sin diagnóstico aún";
+
       const row = document.createElement("tr");
       row.innerHTML = `
         <td><strong>${infoDisp}</strong></td>
         <td>${nombreCliente}</td>
         <td><span class="status-badge ${badgeClass}">${orden.status}</span></td>
         <td>${orden.issueDescription || "-"}</td>
+        <td>${diagnostico}</td>
         <td>${orden.finalCost ? `${orden.finalCost} €` : orden.estimatedCost ? `${orden.estimatedCost} € (Est.)` : "0.00 €"}</td>
         <td>
           <div class="action-buttons">
