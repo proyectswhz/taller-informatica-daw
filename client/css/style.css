@@ -390,7 +390,7 @@ form select:focus {
 }
 
 /* ==========================================================================
-   6. Tablas y Botones de Acción
+   6. Tablas, Enlaces de Cliente y Botones de Acción
    ========================================================================== */
 .table-responsive {
   width: 100%;
@@ -423,6 +423,31 @@ td {
 
 tr:hover td {
   background-color: #faf8f5;
+}
+
+.cliente-link-btn {
+  background: none;
+  border: none;
+  color: #1e3a8a;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-align: left;
+  padding: 0.15rem 0;
+  transition:
+    color 0.2s ease,
+    text-decoration-color 0.2s ease;
+}
+
+.cliente-link-btn:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.diagnostico-col {
+  max-width: 260px;
+  line-height: 1.4;
 }
 
 .action-buttons {
@@ -470,7 +495,7 @@ tr:hover td {
 }
 
 /* ==========================================================================
-   7. Modales Flotantes
+   7. Modales Flotantes y Perfil del Cliente
    ========================================================================== */
 .modal-overlay {
   position: fixed;
@@ -513,6 +538,38 @@ tr:hover td {
     transform: scale(1);
     opacity: 1;
   }
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  line-height: 1.5;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #f3eff6;
+  font-size: 0.95rem;
+}
+
+.profile-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.profile-label {
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+.profile-value {
+  color: #374151;
+  text-align: right;
+  word-break: break-word;
 }
 
 /* ==========================================================================
